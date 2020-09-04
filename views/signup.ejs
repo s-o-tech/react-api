@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <%- include('./header');%>
+  <body>
+      <h1>Sign Up</h1>
+      <%if(errorMessage != ''){%>
+        <div class="alert alert-danger">
+          <strong>Warning!</strong>  <%= errorMessage%>
+        </div>
+      <%}%>
+      <form action="/signup" method="post">
+        <div>
+            <label>UserName：</label>
+            <input type="text" name="username"/>
+        </div>
+        <div>
+            <label>Email：</label>
+            <input type="text" name="email"/>
+        </div>
+        <div>
+            <label>Password：</label>
+            <input type="password" name="password"/>
+        </div>
+        <div>
+            <label>Password Confirm：</label>
+            <input type="password" name="passwordConfirm"/>
+        </div>
+
+        <div>
+            <input type="submit" value="Register"/>
+        </div>
+      </form>
+  </body>
+  <%- include('./footer');%>
+</html>
