@@ -5,7 +5,7 @@ module.exports = {
   development: {
     client: 'mysql',
     connection: {
-      database: 'micropost',
+      database: 'Micropost',
       user:     'root',
       password: 'roottoor'
     },
@@ -18,7 +18,7 @@ module.exports = {
   staging: {
     client: 'mysql',
     connection: {
-      database: 'micropost',
+      database: 'Micropost',
       user:     'root',
       password: 'roottoor'
     },
@@ -35,7 +35,7 @@ module.exports = {
   production: {
     client: 'mysql',
     connection: {
-      database: 'micropost',
+      database: 'Micropost',
       user:     'root',
       password: 'roottoor'
     },
