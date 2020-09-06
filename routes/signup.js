@@ -13,16 +13,16 @@ router.post('/', function(req,res,next){
         email = req.body.email,
         errorMessage = [];
     if(username == ''){
-        errorMessage.push('usernameが空欄です');
+        errorMessage.push("username can't be blank");
     }
     if(password == ''){
-        errorMessage.push('passwordが空欄です');
+        errorMessage.push("password can't be blank");
     }
     if(email == '' || !(/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) ){
-        errorMessage.push('emailが空欄です');
+        errorMessage.push("email is invalid");
     }
     if(password != passwordConfirm){
-        errorMessage.push('パスワードが一致していません');
+        errorMessage.push("Password doesn't match.");
     }
 
     if(errorMessage.length != 0){
