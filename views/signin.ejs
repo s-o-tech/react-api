@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <%- include('./header');%>
+  <body>
+      <h1 class='text-center'>Sign in Page</h1>
+      <%if(errorMessage.length != 0){%>
+        <div class="alert alert-danger">
+          <strong>Warning!</strong> The form contains <%= errorMessage.length%> errors.
+        </div>
+        <div>
+          <ul>
+            <%for(let item of errorMessage){%>
+              <li><%=item%></li>
+            <%}%>
+          </ul>
+        </div>
+      <%}%>
+      <form action="/signin" method="post" class='form-signin'>
+        <div>
+            <label>Email</label>
+            <input type="email" name="email" class="form-control"/>
+        </div>
+        <div>
+            <label>Password</label>
+            <input type="password" name="password" class="form-control"/>
+        </div>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+      </form>
+  </body>
+  <footer>
+    <%- include('./footer');%>
+    <link href="/stylesheets/style.css" rel="stylesheet">
+  </footer>
+</html>

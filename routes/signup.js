@@ -1,9 +1,10 @@
-let express = require('express'),
-    router = express.Router(),
-    knex = require('../db/knex');
+let express = require('express');
+let router = express.Router();
+const knex = require('../db/knex');
+const bcrypt = require('bcrypt');
 
 router.get('/',function(req,res,next){
-    res.render('signup',{title:'Sign Up',errorMessage:[],isAuth:false/*req.isAuthenticated()*/});
+    res.render('signup',{title:'Sign Up',errorMessage:[],isAuth:req.isAuthenticated()});
 });
 
 router.post('/', function(req,res,next){
@@ -13,22 +14,23 @@ router.post('/', function(req,res,next){
         email = req.body.email,
         errorMessage = [];
     if(username == ''){
-        errorMessage.push("username can't be blank");
+        errorMessage.push("Username can't be blank");
     }
     if(password == ''){
-        errorMessage.push("password can't be blank");
+        errorMessage.push("Password can't be blank");
     }
     if(email == '' || !(/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) ){
-        errorMessage.push("email is invalid");
+        errorMessage.push("Invalid Email");
     }
     if(password != passwordConfirm){
         errorMessage.push("Password doesn't match.");
     }
 
     if(errorMessage.length != 0){
-        res.render('signup',{title:'Sign up',errorMessage:errorMessage,isAuth:false});
+        res.render('signup',{title:'Sign up',errorMessage:errorMessage,isAuth:req.isAuthenticated()});
     }
     else {
+        password = bcrypt.hashSync(password,10);
         knex('user').insert({id:0,name:username,password:password,email:email})
         .then(function(resp){
             //あとで変更予定
@@ -36,7 +38,7 @@ router.post('/', function(req,res,next){
         })
         .catch(function(err){
             console.error(err);
-            res.render('signup',{title:'Sign up',errorMessage:[`This username(${username}) is already used`],isAuth:false});
+            res.render('signup',{title:'Sign up',errorMessage:[`This username(${username}) is already used`],isAuth:req.isAuthenticated()});
         }) 
     }
 }

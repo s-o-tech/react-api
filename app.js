@@ -9,12 +9,13 @@ var usersRouter = require('./routes/users');
 var signupRouter = require('./routes/signup');
 var signinRouter = require('./routes/signin');
 
-var knex = require('./db/knex');
-var bodyParser = require('body-parser');
-var passport = require('passport');
-var session = require('express-session');
-var LocalStrategy = require('passport-local').Strategy;
-var flash = require('connect-flash');
+const knex = require('./db/knex');
+const bodyParser = require('body-parser');
+const passport = require('passport');
+const session = require('express-session');
+const LocalStrategy = require('passport-local').Strategy;
+const flash = require('connect-flash');
+const bcrypt = require('bcrypt');
 
 var app = express();
 
@@ -51,16 +52,17 @@ passport.deserializeUser(function(user, done) {
 });
 
 passport.use(new LocalStrategy({
-  emailField: "email", 
+  usernameField: "email", 
   passwordField: "password", 
-},function(email, password, done) {
-  knex.select('*').from('users').where({email:email})
+},function(username, password, done) {
+  knex.select('*').from('user').where({email:username})
   .then(function(rows){
     let users = Object.values(JSON.parse(JSON.stringify(rows)));
+
     if(!users[0] || users.length != 1){
-      return done(null,false,{message:'Invalid UserName'});
+      return done(null,false,{message:'Invalid Email'});
     }
-    else if(users[0].password != password){
+    else if(!bcrypt.compareSync(password,users[0].password)){
       return done(null,false,{message:"Invalid Password"});
     }
     else{
@@ -69,7 +71,7 @@ passport.use(new LocalStrategy({
   })
   .catch(function(err){
     console.error(err);
-    return done(null,false,{message:'error'});
+    return done(null,false,{message:'Error'});
   })
 }
 ));
@@ -78,6 +80,7 @@ passport.use(new LocalStrategy({
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/signup',signupRouter);
+app.use('/signin',signinRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
