@@ -3,7 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' ,isAuth:false});
+  res.render('index', {title:'MicroPost',message:'',isAuth:req.isAuthenticated()});
 });
 
 module.exports = router;

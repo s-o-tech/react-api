@@ -1,23 +1,24 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors'),
+      express = require('express'),
+      path = require('path'),
+      cookieParser = require('cookie-parser'),
+      logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-var signupRouter = require('./routes/signup');
-var signinRouter = require('./routes/signin');
+let indexRouter = require('./routes/index'),
+    usersRouter = require('./routes/users'),
+    signupRouter = require('./routes/signup'),
+    signinRouter = require('./routes/signin'),
+    signoutRouter = require('./routes/signout');
 
-const knex = require('./db/knex');
-const bodyParser = require('body-parser');
-const passport = require('passport');
-const session = require('express-session');
-const LocalStrategy = require('passport-local').Strategy;
-const flash = require('connect-flash');
-const bcrypt = require('bcrypt');
+const knex = require('./db/knex'),
+      bodyParser = require('body-parser'),
+      passport = require('passport'),
+      session = require('express-session'),
+      LocalStrategy = require('passport-local').Strategy,
+      flash = require('connect-flash'),
+      bcrypt = require('bcrypt');
 
-var app = express();
+const app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -55,7 +56,7 @@ passport.use(new LocalStrategy({
   usernameField: "email", 
   passwordField: "password", 
 },function(username, password, done) {
-  knex.select('*').from('user').where({email:username})
+  knex.select('*').from('users').where({email:username})
   .then(function(rows){
     let users = Object.values(JSON.parse(JSON.stringify(rows)));
 
@@ -79,8 +80,9 @@ passport.use(new LocalStrategy({
 //route
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/signup',signupRouter);
-app.use('/signin',signinRouter);
+app.use('/signup', signupRouter);
+app.use('/signin', signinRouter);
+app.use('/signout', signoutRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

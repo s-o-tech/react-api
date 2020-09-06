@@ -31,14 +31,25 @@ router.post('/', function(req,res,next){
     }
     else {
         password = bcrypt.hashSync(password,10);
-        knex('user').insert({id:0,name:username,password:password,email:email})
-        .then(function(resp){
-            //あとで変更予定
-            res.redirect('/');
+        knex('users').insert({id:0,name:username,password:password,email:email})
+        .then(function(){
+            res.render('index', {title:'MicroPost',message:`Welcome ${username}! Please check your email to activate your account.`,isAuth:req.isAuthenticated()});
         })
         .catch(function(err){
             console.error(err);
-            res.render('signup',{title:'Sign up',errorMessage:[`This username(${username}) is already used`],isAuth:req.isAuthenticated()});
+            //usernameが重複している場合
+            if(/users.users_name_unique/.test(err.sqlMessage)){
+                res.render('signup',{title:'Sign up',errorMessage:[`This username(${username}) is already used`],isAuth:req.isAuthenticated()});  
+            }
+            //emailが重複している場合
+            else if(/users.users_email_unique/.test(err.sqlMessage)){
+                res.render('signup',{title:'Sign up',errorMessage:[`This email(${email}) is already used`],isAuth:req.isAuthenticated()});  
+            }
+            //その他のエラーはSQLから出力された文をそのまま表示させます
+            //ここの仕様は応相談
+            else{
+                res.render('signup',{title:'Sign up',errorMessage:[err.sqlMessage],isAuth:req.isAuthenticated()});
+            }
         }) 
     }
 }
