@@ -11,7 +11,6 @@ router.post('/', function(req,res,next){
         password = req.body.password,
         passwordConfirm = req.body.passwordConfirm,
         email = req.body.email;
-
     if(username == ''){
         res.render('signup',{title:'Sign Up',errorMessage:'invalid username',isAuth:false});
     }
