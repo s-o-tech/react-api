@@ -1,35 +1,44 @@
 <!DOCTYPE html>
 <html>
   <%- include('./header');%>
-  <body>
-      <h1>Sign Up</h1>
-      <%if(errorMessage != ''){%>
+  <body >
+      <h1 class='text-center'>Sign up</h1>
+      <%if(errorMessage.length != 0){%>
         <div class="alert alert-danger">
-          <strong>Warning!</strong>  <%= errorMessage%>
+          <strong>Warning!</strong> エラーが<%= errorMessage.length%>個あります
+          <ul>
+            <%for(let item of errorMessage){%>
+              <li><%=item%></li>
+            <%}%>
+          </ul>
         </div>
       <%}%>
-      <form action="/signup" method="post">
+
+      <form action="/signup" method="post" class='form-signin'>
         <div>
-            <label>UserName：</label>
-            <input type="text" name="username"/>
+            <label>UserName</label>
+            <input type="text" name="username" class="form-control"/>
         </div>
         <div>
-            <label>Email：</label>
-            <input type="text" name="email"/>
+            <label>Email</label>
+            <input type="email" name="email" class="form-control"/>
         </div>
         <div>
-            <label>Password：</label>
-            <input type="password" name="password"/>
+            <label>Password</label>
+            <input type="password" name="password" class="form-control"/>
         </div>
         <div>
-            <label>Password Confirm：</label>
-            <input type="password" name="passwordConfirm"/>
+            <label>Password Confirm</label>
+            <input type="password" name="passwordConfirm" class="form-control"/>
         </div>
 
-        <div>
-            <input type="submit" value="Register"/>
-        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
       </form>
+
   </body>
-  <%- include('./footer');%>
+
+  <footer>
+    <%- include('./footer');%>
+    <link href="/stylesheets/style.css" rel="stylesheet">
+  </footer>
 </html>

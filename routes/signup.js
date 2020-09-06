@@ -3,25 +3,30 @@ let express = require('express'),
     knex = require('../db/knex');
 
 router.get('/',function(req,res,next){
-    res.render('signup',{title:'Sign Up',errorMessage:'',isAuth:false/*req.isAuthenticated()*/});
+    res.render('signup',{title:'Sign Up',errorMessage:[],isAuth:false/*req.isAuthenticated()*/});
 });
 
 router.post('/', function(req,res,next){
     let username = req.body.username,
         password = req.body.password,
         passwordConfirm = req.body.passwordConfirm,
-        email = req.body.email;
+        email = req.body.email,
+        errorMessage = [];
     if(username == ''){
-        res.render('signup',{title:'Sign Up',errorMessage:'invalid username',isAuth:false});
+        errorMessage.push('usernameが空欄です');
     }
-    else if(password == ''){
-        res.render('signup',{title:'Sign Up',errorMessage:'invalid password',isAuth:false});
+    if(password == ''){
+        errorMessage.push('passwordが空欄です');
     }
-    else if(email == '' || !(/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) ){
-        res.render('signup',{title:'Sign Up',errorMessage:'invalid email',isAuth:false});
+    if(email == '' || !(/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(email)) ){
+        errorMessage.push('emailが空欄です');
     }
-    else if(password != passwordConfirm){
-        res.render('signup',{title:'Sign Up',errorMessage:'パスワードが一致していません',isAuth:false});
+    if(password != passwordConfirm){
+        errorMessage.push('パスワードが一致していません');
+    }
+
+    if(errorMessage.length != 0){
+        res.render('signup',{title:'Sign up',errorMessage:errorMessage,isAuth:false});
     }
     else {
         knex('user').insert({id:0,name:username,password:password,email:email})
@@ -31,7 +36,7 @@ router.post('/', function(req,res,next){
         })
         .catch(function(err){
             console.error(err);
-            res.render('signup',{title:'Sign Up',errorMessage:`This username(${username}) is already used`,isAuth:req.isAuthenticated()});
+            res.render('signup',{title:'Sign up',errorMessage:[`This username(${username}) is already used`],isAuth:false});
         }) 
     }
 }
