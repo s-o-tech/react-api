@@ -16,25 +16,29 @@ router.post("/", function (req, res, next) {
   const passwordConfirm = req.body.passwordConfirm;
   const email = req.body.email;
   const errorMessage = [];
-  if (username == "") {
+
+  if (username === "") {
     errorMessage.push("username can't be blank");
   }
-  if (password == "") {
+
+  if (password === "") {
     errorMessage.push("password can't be blank");
   }
+
   if (
-    email == "" ||
+    email === "" ||
     !/^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
       email
     )
   ) {
     errorMessage.push("email is invalid");
   }
-  if (password != passwordConfirm) {
+
+  if (password !== passwordConfirm) {
     errorMessage.push("Password doesn't match.");
   }
 
-  if (errorMessage.length != 0) {
+  if (errorMessage.length !== 0) {
     res.render("signup", {
       title: "Sign up",
       errorMessage: errorMessage,
@@ -42,7 +46,7 @@ router.post("/", function (req, res, next) {
     });
   } else {
     knex("user")
-      .insert({ id: 0, name: username, password: password, email: email })
+      .insert({ name: username, password: password, email: email })
       .then(function (resp) {
         // あとで変更予定
         res.redirect("/");
