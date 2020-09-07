@@ -9,7 +9,8 @@ let indexRouter = require('./routes/index'),
     signupRouter = require('./routes/signup'),
     signinRouter = require('./routes/signin'),
     logoutRouter = require('./routes/logout'),
-    editRouter = require('./routes/edit');
+    editRouter = require('./routes/edit'),
+    userlistRouter = require('./routes/userlist');
 
 const knex = require('./db/knex'),
       bodyParser = require('body-parser'),
@@ -85,6 +86,7 @@ app.use('/signup', signupRouter);
 app.use('/signin', signinRouter);
 app.use('/logout', logoutRouter);
 app.use('/edit',editRouter);
+app.use('/userlist',userlistRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

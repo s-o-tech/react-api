@@ -1,7 +1,7 @@
-let express = require('express');
-let router = express.Router();
-const knex = require('../db/knex');
-const bcrypt = require('bcrypt');
+const express = require('express'),
+      router = express.Router(),
+      knex = require('../db/knex'),
+      bcrypt = require('bcrypt');
 
 router.get('/',function(req,res,next){
     res.render('signup',{title:'Sign Up',errorMessage:[],isAuth:req.isAuthenticated()});
