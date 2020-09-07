@@ -10,7 +10,7 @@ router.get('/',function(req,res,next){
 router.post('/', function(req,res,next){
     let username = req.body.username,
         password = req.body.password,
-        passwordConfirm = req.body.passwordConfirm,
+        passwordConfirm = req.body.confirmation,
         email = req.body.email,
         errorMessage = [];
     if(username == ''){

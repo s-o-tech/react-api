@@ -8,7 +8,8 @@ let indexRouter = require('./routes/index'),
     usersRouter = require('./routes/users'),
     signupRouter = require('./routes/signup'),
     signinRouter = require('./routes/signin'),
-    signoutRouter = require('./routes/signout');
+    logoutRouter = require('./routes/logout'),
+    editRouter = require('./routes/edit');
 
 const knex = require('./db/knex'),
       bodyParser = require('body-parser'),
@@ -72,7 +73,7 @@ passport.use(new LocalStrategy({
   })
   .catch(function(err){
     console.error(err);
-    return done(null,false,{message:'Error'});
+    return done(null,false,{message:'DB Error'});
   })
 }
 ));
@@ -82,7 +83,8 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/signup', signupRouter);
 app.use('/signin', signinRouter);
-app.use('/signout', signoutRouter);
+app.use('/logout', logoutRouter);
+app.use('/edit',editRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

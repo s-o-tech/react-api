@@ -15,9 +15,10 @@
                 <a class="nav-link" href="/">Top</a>
               </li>
               <li class="nav-item">
-                <!-- <a class="nav-link" href="/viewTask">viewTask</a> -->
+                <!-- <a class="nav-link" href=" "> </a> -->
               </li>
             </ul>
+
             <ul class="nav navbar-nav ml-auto">
             <%if(!isAuth){%>
               <li class="nav-item">
@@ -27,12 +28,22 @@
                 <a class="nav-link" href="/signin"><span class="fas fa-sign-in-alt"></span> Sign In</a>
               </li>
             <%}else{%>
-              <li class="nav-item">
-                <a class="nav-link" href="/mypage"><span class="fas fa-user-cog"></span> Mypage</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/signout"><span class="fas fa-sign-out-alt"></span> Sign Out</a>
-              </li>
+              <!-- dropdownメニューはうまく動作しませんでした -->
+              <!-- <li class="dropdown">
+                <a class="nav-link dropdown-toggle" href="" data-toggle="dropdown">
+                  Account
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li><a class="dropdown-item" href="/mypage"><span class="fas fa-user-cog"></span> Mypage</a></li>
+                  <li><div class="dropdown-divider"></div></li>
+                  <li><a class="dropdown-item" href="/logout"><span class="fas fa-sign-out-alt"></span> Log Out</a></li>
+                </ul>
+              </li> -->
+                <li><a class="nav-link" href="/mypage"><span class="fas fa-user-cog"></span> Mypage</a></li>
+                <li><a class="nav-link" href="/edit"><span class="fas fa-cog"></span> Settings</a></li>
+                
+                <li><div class="dropdown-divider"></div></li>
+                <li><a class="nav-link" href="/logout"><span class="fas fa-sign-out-alt"></span> Log Out</a></li>
             <%}%>
             </ul>
         </div> 
