@@ -1,35 +1,44 @@
 // Update with your config settings.
 
+const defaultConfig = {
+  client: "mysql",
+  migrations: {
+    directory: "./db/migrations",
+    tableName: "knex_migrations"
+  }
+};
+
 module.exports = {
 
   development: {
-    client: 'mysql',
+    ...defaultConfig,
     connection: {
       database: 'Micropost',
       user:     'root',
       password: 'roottoor'
     },
-    migrations: {
-      directory: './db/migrations',
-      tableName: 'knex_migrations'
-    }
+  },
+
+  review: {
+    ...defaultConfig,
+    connection: process.env.CLEARDB_DATABASE_URL,
+    pool: {
+      min: 2,
+      max: 10,
+    },
   },
 
   staging: {
-    client: 'mysql',
+    ...defaultConfig,
     connection: process.env.DATABASE_URL,
     pool: {
       min: 2,
       max: 10
     },
-    migrations: {
-      directory: './db/migrations',
-      tableName: 'knex_migrations'
-    }
   },
 
   production: {
-    client: 'mysql',
+    ...defaultConfig,
     connection: {
       database: 'Micropost',
       user:     'root',
@@ -39,10 +48,5 @@ module.exports = {
       min: 2,
       max: 10
     },
-    migrations: {
-      directory: './db/migrations',
-      tableName: 'knex_migrations'
-    }
   }
-
 };
