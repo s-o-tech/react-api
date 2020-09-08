@@ -1,0 +1,31 @@
+{
+  "addons": [
+    "cleardb"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "CLEARDB_DATABASE_URL": {
+      "required": true
+    },
+    "DATABASE_URL": {
+      "required": true
+    },
+    "ENVIRONMENT": {
+      "required": true
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "micropost",
+  "scripts": {
+    "postdeploy": "knex migrate:latest --env $ENVIRONMENT"
+  },
+  "stack": "heroku-18"
+}
