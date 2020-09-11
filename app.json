@@ -1,0 +1,25 @@
+{
+  "addons": [
+    "cleardb"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    }
+  ],
+  "env": {
+    "ENVIRONMENT": {
+      "value": "review"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1
+    }
+  },
+  "name": "micropost",
+  "scripts": {
+    "postdeploy": "knex migrate:latest --env $ENVIRONMENT"
+  },
+  "stack": "heroku-18"
+}
