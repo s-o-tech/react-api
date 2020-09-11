@@ -75,7 +75,8 @@ passport.use(
           return done(null, false, { message: "Error" });
         });
     }
-));
+  )
+);
 
 // router
 app.use("/", require("./routes"));
