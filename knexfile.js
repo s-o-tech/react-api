@@ -1,61 +1,51 @@
 // Update with your config settings.
 
-module.exports = {
+const defaultConfig = {
+  client: "mysql",
+  migrations: {
+    directory: "./db/migrations",
+    tableName: "knex_migrations",
+  },
+};
 
+module.exports = {
   development: {
-    client: 'mysql',
+    ...defaultConfig,
     connection: {
-      database: 'Micropost',
-      user:     'root',
-      password: 'roottoor'
+      database: "Micropost",
+      user: "root",
+      password: "roottoor",
     },
-    migrations: {
-      directory: './db/migrations',
-      tableName: 'knex_migrations'
-    },
-    seeds:{
-      directory:'./db/seeds'
+  },
+
+  review: {
+    ...defaultConfig,
+    connection: process.env.CLEARDB_DATABASE_URL,
+    pool: {
+      min: 2,
+      max: 10,
     },
   },
 
   staging: {
-    client: 'mysql',
-    connection: {
-      database: 'Micropost',
-      user:     'root',
-      password: 'roottoor'
-    },
+    ...defaultConfig,
+    connection: process.env.DATABASE_URL,
     pool: {
       min: 2,
-      max: 10
-    },
-    migrations: {
-      directory: './db/migrations',
-      tableName: 'knex_migrations'
-    },
-    seeds:{
-      directory:'./db/seeds'
+      max: 10,
     },
   },
 
   production: {
-    client: 'mysql',
+    ...defaultConfig,
     connection: {
-      database: 'Micropost',
-      user:     'root',
-      password: 'roottoor'
+      database: "Micropost",
+      user: "root",
+      password: "roottoor",
     },
     pool: {
       min: 2,
-      max: 10
+      max: 10,
     },
-    migrations: {
-      directory: './db/migrations',
-      tableName: 'knex_migrations'
-    },
-    seeds:{
-      directory:'./db/seeds'
-    },
-  }
-
+  },
 };
