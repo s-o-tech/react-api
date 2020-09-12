@@ -3,7 +3,15 @@
   <%- include('./header');%>
   <body>
     <h1><%= title %></h1>
+    <%if(message != ''){%>
+      <div class="alert alert-primary">
+        <%= message %>
+      </div>
+    <%}%>
     <p>Welcome to <%= title %></p>
   </body>
-  <%- include('./footer');%>
+  
+  <footer>
+    <%- include('./footer');%>
+  </footer>
 </html>
