@@ -16,5 +16,6 @@ router.use("/signin", require("./signin"));
 router.use("/logout", require("./logout"));
 router.use("/edit", require("./edit"));
 router.use("/userlist", require("./userlist"));
+router.use("/password_resets", require("./password_resets"));
 
 module.exports = router;

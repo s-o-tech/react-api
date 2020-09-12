@@ -43,7 +43,7 @@ router.post("/", function (req, res, next) {
     res.render("signup", {
       title: "Sign up",
       errorMessage: errorMessage,
-      isAuth: false,
+      isAuth: req.isAuthenticated(),
     });
   } else {
     knex("users")
@@ -57,7 +57,7 @@ router.post("/", function (req, res, next) {
         res.render("signup", {
           title: "Sign up",
           errorMessage: [`This username(${username}) is already used`],
-          isAuth: false,
+          isAuth: req.isAuthenticated(),
         });
       });
   }
