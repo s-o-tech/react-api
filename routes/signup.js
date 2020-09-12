@@ -1,19 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const knex = require("../db/knex");
+const bcrypt = require("bcrypt");
 
 router.get("/", function (req, res, next) {
   res.render("signup", {
     title: "Sign Up",
     errorMessage: [],
-    isAuth: false /* req.isAuthenticated() */,
+    isAuth: req.isAuthenticated(),
   });
 });
 
 router.post("/", function (req, res, next) {
   const username = req.body.username;
-  const password = req.body.password;
-  const passwordConfirm = req.body.passwordConfirm;
+  const password = bcrypt.hashSync(req.body.password, 10);
+  const passwordConfirm = req.body.confirmation;
   const email = req.body.email;
   const errorMessage = [];
 
@@ -34,7 +35,7 @@ router.post("/", function (req, res, next) {
     errorMessage.push("email is invalid");
   }
 
-  if (password !== passwordConfirm) {
+  if (bcrypt.compareSync(password, passwordConfirm)) {
     errorMessage.push("Password doesn't match.");
   }
 
@@ -45,7 +46,7 @@ router.post("/", function (req, res, next) {
       isAuth: false,
     });
   } else {
-    knex("user")
+    knex("users")
       .insert({ name: username, password: password, email: email })
       .then(function (resp) {
         // あとで変更予定

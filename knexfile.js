@@ -16,6 +16,9 @@ module.exports = {
       user: "root",
       password: "roottoor",
     },
+    seed: {
+      directory: "./db/seeds",
+    },
   },
 
   review: {
