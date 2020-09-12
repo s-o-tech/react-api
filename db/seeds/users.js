@@ -28,14 +28,14 @@ exports.seed = function (knex) {
           email: "test1@example.com",
           password: bcrypt.hashSync("test1", 10),
           isAdmin: false,
-        },        
+        },
         {
           id: 0,
           name: "test2",
           email: "test2@example.com",
           password: bcrypt.hashSync("test", 10),
           isAdmin: false,
-        },        
+        },
         {
           id: 0,
           name: "test3",
