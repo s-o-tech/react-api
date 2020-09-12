@@ -16,7 +16,7 @@ module.exports = {
       user: "root",
       password: "roottoor",
     },
-    seed: {
+    seeds: {
       directory: "./db/seeds",
     },
   },
