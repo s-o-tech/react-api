@@ -7,8 +7,9 @@ exports.up = function(knex, Promise) {
         t.increments('id').primary();
         t.string('name').unique();
         t.string('email').unique();
-        t.string('password').not;
+        t.string('password').notNullable();
         t.boolean('isAdmin').defaultTo(false);
+        t.string('remember');
       });
     }else{
       return new Error("The table already exists");

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const knex = require("../db/knex");
 const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 const smtpConfig = nodemailer.createTransport({
     host:'SMTP SERVER',
     port:25,
@@ -23,6 +24,7 @@ router.get("/new", function(req, res, next){
 
 router.post("/new", function (req, res, next) {
     const email = req.body.email;
+    const token = crypto.randomBytes(16).toString("hex");
 
     knex("users")
     .where({email: email })

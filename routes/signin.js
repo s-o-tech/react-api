@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
+const crypto = require("crypto");
+const RememberMeStrategy = require("passport-remember-me").Strategy;
+
 
 router.get("/", function (req, res, next) {
   res.render("signin", {
@@ -16,21 +19,34 @@ router.post(
     failureRedirect: "/signin",
     failureFlash: true,
   }),
-  function (req, res) {
-    // ここは後にアカウント認証済みか否かで分岐させる処理に変えます
-    if (req.user.isAdmin) {
-      res.render("index", {
-        title: "MicroPost",
-        message: "Welcome Admin!",
-        isAuth: req.isAuthenticated(),
-      });
-    } else {
-      res.render("index", {
-        title: "MicroPost",
-        message: "Welcome Nomal User",
-        isAuth: req.isAuthenticated(),
-      });
+  function (req, res, next) {
+    if(!req.body.remember_me){
+      console.log("no cookie");
+      return next();
     }
+    const token = crypto.randomBytes(64).toString("hex");
+    Token.save(token, { userId: req.user.id }, function(err) {
+      if (err) { return done(err); }
+      res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 60*60*24*7 });
+      return next();
+    });
+    // // ここは後にアカウント認証済みか否かで分岐させる処理に変えます
+    // if (req.user.isAdmin) {
+    //   res.render("index", {
+    //     title: "MicroPost",
+    //     message: "Welcome Admin!",
+    //     isAuth: req.isAuthenticated(),
+    //   });
+    // } else {
+    //   res.render("index", {
+    //     title: "MicroPost",
+    //     message: "Welcome Nomal User",
+    //     isAuth: req.isAuthenticated(),
+    //   });
+    // }
+  },
+  function(req,res){
+    res.redirect("/");
   }
 );
 
