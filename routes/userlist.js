@@ -21,6 +21,7 @@ router.get("/", function (req, res, next) {
         isAuth: req.isAuthenticated(),
         users: userRows,
         pagination: pagination,
+        isAdmin: req.user.isAdmin,
       });
     });
 });

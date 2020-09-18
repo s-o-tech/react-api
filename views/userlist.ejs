@@ -5,11 +5,48 @@
     
     <h1>User List</h1>
 
-    <ul>
+    <table>
+      <tbody>
         <%for(let user of users){%>
-            <li><%=user.name%></li>
+          <tr>
+            <td><%=user.name%></td>
+
+            <%if(isAdmin){%>
+              <td>
+                <a href="" class="delete-confirm" data-toggle="modal" data-target="#deleteModal" data-whatever="<%=user.name%>">delete</a>
+              </td>
+            <%}%>
+          </tr>
+
         <%}%>
-    </ul>
+      </tbody>
+    </table>
+
+    <!-- Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="deleteModalLabel">削除確認</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            本当に<a id="deleteUser">user</a>を削除しますか？
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <form action="/userlist" method="post">
+              <input type="hidden" name="target" id="deleteTarget"/>
+              <button type="submit" class="btn btn-primary" id="deleteButton" >Delete</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <nav aria-label="Page navigation example">
       <ul class="pagination">
         <% if (pagination.currentPage != 1){%>
@@ -55,5 +92,6 @@
   
   <footer>
     <%- include('./footer');%>
+    <script src="/js/deleteuser.js"></script>
   </footer>
 </html>
