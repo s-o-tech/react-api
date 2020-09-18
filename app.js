@@ -7,10 +7,8 @@ const flash = require("express-flash");
 const bodyParser = require("body-parser");
 const session = require("express-session");
 const passport = require("passport");
+const LocalStrategy = require("passport-local");
 const bcrypt = require("bcrypt");
-const crypto = require("crypto");
-const LocalStrategy = require("passport-local").Strategy;
-const RememberMeStrategy = require("passport-remember-me").Strategy;
 
 const knex = require("./db/knex");
 
@@ -34,13 +32,14 @@ app.use(
     secret: "secret",
     resave: false,
     saveUninitialized: false,
-    
+    cookie: {
+      maxAge: 60 * 60 * 1000,
+    },
   })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(passport.authenticate("remember-me"));
 
 passport.serializeUser(function (user, done) {
   done(null, user);
@@ -48,24 +47,6 @@ passport.serializeUser(function (user, done) {
 passport.deserializeUser(function (user, done) {
   done(null, user);
 });
-
-passport.use(
-  new RememberMeStrategy(
-    function(token, done) {
-      Token.consume(token, function (err, user) {
-        if (err) { return done(err); }
-        if (!user) { return done(null, false); }
-        return done(null, user);
-      });
-    },
-    function(user, done) {
-      const token = crypto.randomBytes(64).toString("hex");
-      Token.save(token, { userId: user.id }, function(err) {
-        if (err) { return done(err); }
-        return done(null, token);
-      });
-    }
-));
 
 passport.use(
   new LocalStrategy(

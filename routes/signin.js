@@ -25,11 +25,7 @@ router.post(
       return next();
     }
     const token = crypto.randomBytes(64).toString("hex");
-    Token.save(token, { userId: req.user.id }, function(err) {
-      if (err) { return done(err); }
-      res.cookie('remember_me', token, { path: '/', httpOnly: true, maxAge: 60*60*24*7 });
-      return next();
-    });
+
     // // ここは後にアカウント認証済みか否かで分岐させる処理に変えます
     // if (req.user.isAdmin) {
     //   res.render("index", {
