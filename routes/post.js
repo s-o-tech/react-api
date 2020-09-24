@@ -10,7 +10,7 @@ router.post('/', function(req,res,next){
     const userId = req.user.id;;
     const content = req.body.content;
 
-    knex('micropost').insert({content:content,user_id:userId})
+    knex('microposts').insert({content:content,user_id:userId})
       .then(function(resp){
           res.redirect('home');
       })

@@ -2,11 +2,11 @@
 
 exports.seed = function (knex) {
   // Deletes ALL existing entries
-  return knex("micropost")
+  return knex("microposts")
     .del()
     .then(function () {
       // Inserts seed entries
-      return knex("micropost").insert([
+      return knex("microposts").insert([
         {
           id: 0,
           content: "aaa",

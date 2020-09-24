@@ -10,7 +10,7 @@ router.post('/', function(req,res,next){
   const postId = req.body.postId;
   const userId = req.user.id;
 
-  knex('micropost')
+  knex('microposts')
     .where({
     id: postId,
     user_id: userId,

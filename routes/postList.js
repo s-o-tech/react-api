@@ -14,7 +14,7 @@ router.get("/", function (req, res, next) {
     currentPage = parseInt(req.query.page);
   }
 
-  knex("micropost")
+  knex("microposts")
     .where("user_id", userId)
     .paginate({ perPage: 10, currentPage: currentPage, isLengthAware: true })
     .then(function (result) {
