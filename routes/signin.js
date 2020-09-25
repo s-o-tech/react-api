@@ -1,9 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const crypto = require("crypto");
-const RememberMeStrategy = require("passport-remember-me").Strategy;
-
 
 router.get("/", function (req, res, next) {
   res.render("signin", {
@@ -20,28 +17,14 @@ router.post(
     failureFlash: true,
   }),
   function (req, res, next) {
-    if(!req.body.remember_me){
-      console.log("no cookie");
+    if (!req.body.remember_me) {
+      req.session.cookie.expires = false;
       return next();
     }
-    const token = crypto.randomBytes(64).toString("hex");
-
-    // // ここは後にアカウント認証済みか否かで分岐させる処理に変えます
-    // if (req.user.isAdmin) {
-    //   res.render("index", {
-    //     title: "MicroPost",
-    //     message: "Welcome Admin!",
-    //     isAuth: req.isAuthenticated(),
-    //   });
-    // } else {
-    //   res.render("index", {
-    //     title: "MicroPost",
-    //     message: "Welcome Nomal User",
-    //     isAuth: req.isAuthenticated(),
-    //   });
-    // }
+    req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
+    return next();
   },
-  function(req,res){
+  function (req, res) {
     res.redirect("/");
   }
 );

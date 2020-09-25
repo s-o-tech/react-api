@@ -9,6 +9,15 @@ const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const bcrypt = require("bcrypt");
+const MySQLStore = require("express-mysql-session");
+const options = {
+  host: "localhost",
+  port: "3306",
+  user: "root",
+  password: "roottoor",
+  database: "Micropost",
+};
+const sesisonStore = new MySQLStore(options);
 
 const knex = require("./db/knex");
 
@@ -32,6 +41,7 @@ app.use(
     secret: "secret",
     resave: false,
     saveUninitialized: false,
+    store: sesisonStore,
     cookie: {
       maxAge: 60 * 60 * 1000,
     },
@@ -45,7 +55,16 @@ passport.serializeUser(function (user, done) {
   done(null, user);
 });
 passport.deserializeUser(function (user, done) {
-  done(null, user);
+  knex
+    .select("*")
+    .from("users")
+    .where({ id: user.id })
+    .then(function (result) {
+      return done(null, result);
+    })
+    .catch(function () {
+      return done(null, false);
+    });
 });
 
 passport.use(
@@ -72,7 +91,7 @@ passport.use(
         })
         .catch(function (err) {
           console.error(err);
-          return done(null, false, { message: "Error" });
+          return done(null, false, { message: "DB Error" });
         });
     }
   )
