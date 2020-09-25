@@ -10,13 +10,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local");
 const bcrypt = require("bcrypt");
 const MySQLStore = require("express-mysql-session");
-const options = {
-  host: "localhost",
-  port: "3306",
-  user: "root",
-  password: "roottoor",
-  database: "Micropost",
-};
+const options = require("./db/config");
 const sesisonStore = new MySQLStore(options);
 
 const knex = require("./db/knex");
