@@ -5,7 +5,27 @@ const knex = require("../db/knex");
 router.get("/", function (req, res, next) {
   const userId = req.user.id;
   const userName = req.user.name;
-  const url = req.baseUrl.slice(1);
+  const baseUrl = req.baseUrl;
+  let targetUserId = userId;
+  let renderTo = "index";
+  let followed = false;
+
+  if (baseUrl === "/home") {
+    renderTo = "home";
+  } else if (baseUrl.startsWith("/users")) {
+    renderTo = "profile";
+    targetUserId = Number(baseUrl.replace(/[^0-9]/g, ""));
+  }
+
+  if (userId !== targetUserId) {
+    knex("relationships")
+      .where({ follower_id: req.user.id, followed_id: targetUserId })
+      .then(function (result) {
+        if (Number(result.length) !== 0) {
+          followed = true;
+        }
+      });
+  }
 
   let currentPage;
   if (req.query.page === undefined) {
@@ -14,27 +34,34 @@ router.get("/", function (req, res, next) {
     currentPage = parseInt(req.query.page);
   }
 
+
+
   knex("microposts")
-    .where("user_id", userId)
+    .where("user_id", targetUserId)
     .paginate({ perPage: 10, currentPage: currentPage, isLengthAware: true })
     .then(function (result) {
       const microposts = JSON.parse(JSON.stringify(result.data));
       const pagination = result.pagination;
-      res.render(url, {
+      console.debug(microposts)
+      res.render(renderTo, {
         title: "",
         message: "",
         isAuth: req.isAuthenticated(),
+        userId: userId,
+        targetUserId: targetUserId,
         userName: userName,
+        followed: followed,
         microposts: microposts,
         pagination: pagination,
       });
     })
     .catch(function (err) {
       console.error(err);
-      res.render(url, {
+      res.render(renderTo, {
         title: "",
         errorMessage: [err.sqlMessage],
         isAuth: req.isAuthenticated(),
+        userId: userId,
       });
     });
 });

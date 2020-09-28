@@ -7,15 +7,30 @@
     <h1 class="center"><%= userName %></h1>
   </div>
   <div class="col-md-8">
+    <% if (userId !== targetUserId) { %>
+      <% if (!followed) { %>
+        <form action="/follow" method="post">
+          <input type="hidden" name="targetUserId" value=<%= targetUserId %>>
+          <button class="btn btn-sm btn-primary" type="submit">Follow</button>
+        </form>
+      <% } else { %>
+        <form action="/unFollow" method="post">
+          <input type="hidden" name="targetUserId" value=<%= targetUserId %>>
+          <button class="btn btn-sm btn-primary" type="submit">UnFollow</button>
+        </form>
+      <% } %>
+    <% } %>
     <ul>
-      <h2>Microscope Feed</h2>
+      <h2>Microposts</h2>
       <% for(let micropost of microposts){ %>
         <hr>
         <%= micropost.content %>
-        <form action="/deletePost" method="post">
-          <input type="hidden" name="postId" value=<%= micropost.id %>>
-          <button class="btn btn-sm btn-primary" type="submit">delete</button>
-        </form>
+        <% if (userId == targetUserId) { %>
+          <form action="/deletePost" method="post">
+            <input type="hidden" name="postId" value=<%= micropost.id %>>
+            <button class="btn btn-sm btn-primary" type="submit">delete</button>
+          </form>
+        <% } %>
       <% } %>
     </ul>
     <nav aria-label="Page navigation example">
