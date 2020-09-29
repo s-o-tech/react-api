@@ -77,5 +77,6 @@ router.use("/users/*", require("./profile"));
 router.use("/post", require("./post"));
 router.use("/deletePost", require("./deletePost"));
 router.use("/follow", require("./follow"));
+router.use("/unFollow", require("./unFollow"));
 
 module.exports = router;
