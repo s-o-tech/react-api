@@ -9,6 +9,7 @@ router.get("/", function (req, res, next) {
   let targetUserId = userId;
   let renderTo = "index";
   let followed = false;
+  let total = "";
 
   if (baseUrl === "/home") {
     renderTo = "home";
@@ -36,6 +37,21 @@ router.get("/", function (req, res, next) {
 
   knex("microposts")
     .where("user_id", targetUserId)
+    .then(function (result) {
+      total = result.length;
+    })
+    .catch(function (err) {
+      console.error(err);
+      res.render("index", {
+        title: "",
+        errorMessage: [err.sqlMessage],
+        isAuth: req.isAuthenticated(),
+        userId: userId,
+      });
+    });
+
+  knex("microposts")
+    .where("user_id", targetUserId)
     .paginate({ perPage: 10, currentPage: currentPage, isLengthAware: true })
     .then(function (result) {
       const microposts = JSON.parse(JSON.stringify(result.data));
@@ -50,6 +66,7 @@ router.get("/", function (req, res, next) {
         userName: userName,
         followed: followed,
         microposts: microposts,
+        total: total,
         pagination: pagination,
       });
     })
@@ -66,7 +83,7 @@ router.get("/", function (req, res, next) {
 
 router.post("/", function (req, res, next) {
   const followerId = req.user.id;
-  
+
   if (Object.keys(req.body)[0] === "follow") {
     const followedId = Number(req.body.follow);
     knex("relationships")
