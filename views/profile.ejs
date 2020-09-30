@@ -5,6 +5,8 @@
 <div class="row">
   <div class="col-md-4">
     <h1 class="center"><%= userName %></h1>
+    <a class="nav-link" href="/users/<%=userId%>/following"><%= following %> following</a>
+    <a class="nav-link" href="/users/<%=userId%>/followers"><%= followers %> followers</a>
   </div>
   <div class="col-md-8">
     <% if (userId !== targetUserId) { %>

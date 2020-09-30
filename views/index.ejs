@@ -14,6 +14,8 @@
         <div class="col-md-4">
           <h1 class="center"><%= userName %></h1>
           <a class="nav-link" href="/users/<%=userId%>">view my profile <%= total %> microposts</a>
+          <a class="nav-link" href="/users/<%=userId%>/following"><%= following %> following</a>
+          <a class="nav-link" href="/users/<%=userId%>/followers"><%= followers %> followers</a>
           <form action="/" method="post" class='form-signin'>
             <div>
               <textarea name="content" maxlength="140" placeholder="Compose new micropost..."></textarea>
