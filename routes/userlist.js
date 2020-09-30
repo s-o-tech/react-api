@@ -23,6 +23,7 @@ router.get("/", function (req, res, next) {
           users: userRows,
           pagination: pagination,
           isAdmin: req.user.isAdmin,
+          userId: req.user.id,
         });
       })
       .catch(function (err) {
