@@ -3,11 +3,32 @@ const router = express.Router();
 const knex = require("../db/knex");
 
 router.get("/", function (req, res, next) {
-  console.debug("following");
   const userId = req.user.id;
-  const userName = req.user.name;
+  const baseUrl = req.baseUrl;
+  let userName = req.user.name;
+  let targetUserId = userId;
   let totalFollowing = "";
   let totalFollowers = "";
+
+  if (baseUrl.startsWith("/users")) {
+    targetUserId = Number(baseUrl.replace(/[^0-9]/g, ""));
+  }
+
+  knex("users")
+    .where("id", targetUserId)
+    .then(function (result) {
+      const user = JSON.parse(JSON.stringify(result));
+      userName = user[0].name;
+    })
+    .catch(function (err) {
+      console.error(err);
+      res.render("index", {
+        title: "",
+        errorMessage: [err.sqlMessage],
+        isAuth: req.isAuthenticated(),
+        userId: userId,
+      });
+    });
 
   knex("relationships")
     .where("follower_id", userId)
@@ -44,8 +65,6 @@ router.get("/", function (req, res, next) {
     .where("follower_id", userId)
     .then(function (result) {
       const following = JSON.parse(JSON.stringify(result));
-      console.debug("result");
-      console.debug(following);
       res.render("following", {
         title: "",
         message: "",
