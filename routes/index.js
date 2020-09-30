@@ -113,5 +113,7 @@ router.use("/signin", require("./signin"));
 router.use("/logout", require("./logout"));
 router.use("/edit", require("./edit"));
 router.use("/userlist", require("./userlist"));
+router.use("/profile", require("./profile"));
+router.use("/users/*", require("./profile"));
 
 module.exports = router;
