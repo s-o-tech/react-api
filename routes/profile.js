@@ -7,18 +7,17 @@ router.get("/", function (req, res, next) {
   const userName = req.user.name;
   const baseUrl = req.baseUrl;
   let targetUserId = userId;
-  let renderTo = "index";
   let followed = false;
   let total = "";
+  let following = "";
+  let followers = "";
 
-  if (baseUrl === "/home") {
-    renderTo = "home";
-  } else if (baseUrl.startsWith("/users")) {
-    renderTo = "profile";
+  if (baseUrl.startsWith("/users")) {
     targetUserId = Number(baseUrl.replace(/[^0-9]/g, ""));
   }
 
   if (userId !== targetUserId) {
+    console.debug("userId!==targetUserId");
     knex("relationships")
       .where({ follower_id: req.user.id, followed_id: targetUserId })
       .then(function (result) {
@@ -34,6 +33,36 @@ router.get("/", function (req, res, next) {
   } else {
     currentPage = parseInt(req.query.page);
   }
+
+  knex("relationships")
+    .where("follower_id", targetUserId)
+    .then(function (result) {
+      following = result.length;
+    })
+    .catch(function (err) {
+      console.error(err);
+      res.render("index", {
+        title: "",
+        errorMessage: [err.sqlMessage],
+        isAuth: req.isAuthenticated(),
+        userId: userId,
+      });
+    });
+
+  knex("relationships")
+    .where("followed_id", targetUserId)
+    .then(function (result) {
+      followers = result.length;
+    })
+    .catch(function (err) {
+      console.error(err);
+      res.render("index", {
+        title: "",
+        errorMessage: [err.sqlMessage],
+        isAuth: req.isAuthenticated(),
+        userId: userId,
+      });
+    });
 
   knex("microposts")
     .where("user_id", targetUserId)
@@ -56,8 +85,11 @@ router.get("/", function (req, res, next) {
     .then(function (result) {
       const microposts = JSON.parse(JSON.stringify(result.data));
       const pagination = result.pagination;
-      console.debug(microposts);
-      res.render(renderTo, {
+      console.debug(userId);
+      console.debug(typeof userId);
+      console.debug(targetUserId);
+      console.debug(typeof targetUserId);
+      res.render("profile", {
         title: "",
         message: "",
         isAuth: req.isAuthenticated(),
@@ -67,12 +99,14 @@ router.get("/", function (req, res, next) {
         followed: followed,
         microposts: microposts,
         total: total,
+        following: following,
+        followers: followers,
         pagination: pagination,
       });
     })
     .catch(function (err) {
       console.error(err);
-      res.render(renderTo, {
+      res.render("index", {
         title: "",
         errorMessage: [err.sqlMessage],
         isAuth: req.isAuthenticated(),
@@ -94,8 +128,8 @@ router.post("/", function (req, res, next) {
       })
       .catch(function (err) {
         console.error(err);
-        res.render("", {
-          title: "Home",
+        res.render("index", {
+          title: "",
           errorMessage: [err.sqlMessage],
           isAuth: false,
         });
@@ -115,8 +149,8 @@ router.post("/", function (req, res, next) {
       .catch(function (err) {
         console.debug("error");
         console.error(err);
-        res.render("home", {
-          title: "Home",
+        res.render("index", {
+          title: "",
           errorMessage: [err.sqlMessage],
           isAuth: false,
         });
