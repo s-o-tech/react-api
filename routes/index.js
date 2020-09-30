@@ -72,11 +72,9 @@ router.use("/signup", require("./signup"));
 router.use("/signin", require("./signin"));
 router.use("/logout", require("./logout"));
 router.use("/edit", require("./edit"));
-router.use("/home", require("./profile"));
+router.use("/profile", require("./profile"));
 router.use("/users/*", require("./profile"));
 router.use("/post", require("./post"));
 router.use("/deletePost", require("./deletePost"));
-router.use("/follow", require("./follow"));
-router.use("/unFollow", require("./unFollow"));
 
 module.exports = router;

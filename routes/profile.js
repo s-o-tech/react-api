@@ -34,15 +34,13 @@ router.get("/", function (req, res, next) {
     currentPage = parseInt(req.query.page);
   }
 
-
-
   knex("microposts")
     .where("user_id", targetUserId)
     .paginate({ perPage: 10, currentPage: currentPage, isLengthAware: true })
     .then(function (result) {
       const microposts = JSON.parse(JSON.stringify(result.data));
       const pagination = result.pagination;
-      console.debug(microposts)
+      console.debug(microposts);
       res.render(renderTo, {
         title: "",
         message: "",
@@ -64,6 +62,47 @@ router.get("/", function (req, res, next) {
         userId: userId,
       });
     });
+});
+
+router.post("/", function (req, res, next) {
+  const followerId = req.user.id;
+  
+  if (Object.keys(req.body)[0] === "follow") {
+    const followedId = Number(req.body.follow);
+    knex("relationships")
+      .insert({ follower_id: followerId, followed_id: followedId })
+      .then(function (resp) {
+        res.redirect("/users/2");
+      })
+      .catch(function (err) {
+        console.error(err);
+        res.render("", {
+          title: "Home",
+          errorMessage: [err.sqlMessage],
+          isAuth: false,
+        });
+      });
+  } else if (Object.keys(req.body)[0] === "unFollow") {
+    const followedId = Number(req.body.unFollow);
+    knex("relationships")
+      .where({
+        follower_id: followerId,
+        followed_id: followedId,
+      })
+      .del()
+      .then(function (resp) {
+        res.redirect("/users/2");
+      })
+      .catch(function (err) {
+        console.debug("error");
+        console.error(err);
+        res.render("home", {
+          title: "Home",
+          errorMessage: [err.sqlMessage],
+          isAuth: false,
+        });
+      });
+  }
 });
 
 module.exports = router;

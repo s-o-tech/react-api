@@ -9,13 +9,13 @@
   <div class="col-md-8">
     <% if (userId !== targetUserId) { %>
       <% if (!followed) { %>
-        <form action="/follow" method="post">
-          <input type="hidden" name="targetUserId" value=<%= targetUserId %>>
+        <form action="/profile" method="post">
+          <input type="hidden" name="follow" value=<%= targetUserId %>>
           <button class="btn btn-sm btn-primary" type="submit">Follow</button>
         </form>
       <% } else { %>
-        <form action="/unFollow" method="post">
-          <input type="hidden" name="targetUserId" value=<%= targetUserId %>>
+        <form action="/profile" method="post">
+          <input type="hidden" name="unFollow" value=<%= targetUserId %>>
           <button class="btn btn-sm btn-primary" type="submit">UnFollow</button>
         </form>
       <% } %>
