@@ -8,6 +8,7 @@ router.get("/", function (req, res, next) {
     title: "Edit User",
     errorMessage: [],
     isAuth: req.isAuthenticated(),
+    userId: req.user.id,
   });
 });
 
