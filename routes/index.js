@@ -9,8 +9,8 @@ router.get("/", function (req, res, next) {
     const userName = req.user.name;
     let total = "";
     let currentPage;
-    let following = "";
-    let followers = "";
+    let totalFollowing = "";
+    let totalFollowers = "";
 
     if (req.query.page === undefined) {
       currentPage = 1;
@@ -21,7 +21,7 @@ router.get("/", function (req, res, next) {
     knex("relationships")
       .where("follower_id", userId)
       .then(function (result) {
-        following = result.length;
+        totalFollowing = result.length;
       })
       .catch(function (err) {
         console.error(err);
@@ -36,7 +36,7 @@ router.get("/", function (req, res, next) {
     knex("relationships")
       .where("followed_id", userId)
       .then(function (result) {
-        followers = result.length;
+        totalFollowers = result.length;
       })
       .catch(function (err) {
         console.error(err);
@@ -69,7 +69,6 @@ router.get("/", function (req, res, next) {
       .then(function (result) {
         const microposts = JSON.parse(JSON.stringify(result.data));
         const pagination = result.pagination;
-        console.debug(microposts);
         res.render("index", {
           title: "",
           message: "",
@@ -79,8 +78,8 @@ router.get("/", function (req, res, next) {
           microposts: microposts,
           total: total,
           pagination: pagination,
-          following: following,
-          followers: followers,
+          totalFollowing: totalFollowing,
+          totalFollowers: totalFollowers,
         });
       })
       .catch(function (err) {
