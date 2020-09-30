@@ -9,12 +9,44 @@ router.get("/", function (req, res, next) {
     const userName = req.user.name;
     let total = "";
     let currentPage;
+    let following = "";
+    let followers = "";
 
     if (req.query.page === undefined) {
       currentPage = 1;
     } else {
       currentPage = parseInt(req.query.page);
     }
+
+    knex("relationships")
+      .where("follower_id", userId)
+      .then(function (result) {
+        following = result.length;
+      })
+      .catch(function (err) {
+        console.error(err);
+        res.render("index", {
+          title: "",
+          errorMessage: [err.sqlMessage],
+          isAuth: req.isAuthenticated(),
+          userId: userId,
+        });
+      });
+
+    knex("relationships")
+      .where("followed_id", userId)
+      .then(function (result) {
+        followers = result.length;
+      })
+      .catch(function (err) {
+        console.error(err);
+        res.render("index", {
+          title: "",
+          errorMessage: [err.sqlMessage],
+          isAuth: req.isAuthenticated(),
+          userId: userId,
+        });
+      });
 
     knex("microposts")
       .where("user_id", userId)
@@ -47,6 +79,8 @@ router.get("/", function (req, res, next) {
           microposts: microposts,
           total: total,
           pagination: pagination,
+          following: following,
+          followers: followers,
         });
       })
       .catch(function (err) {
@@ -114,6 +148,8 @@ router.use("/logout", require("./logout"));
 router.use("/edit", require("./edit"));
 router.use("/userlist", require("./userlist"));
 router.use("/profile", require("./profile"));
-router.use("/users/*", require("./profile"));
+router.use("/users/[+-]?\\d+", require("./profile"));
+router.use("/users/[+-]?\\d+/following", require("./following"));
+router.use("/users/[+-]?\\d+/followers", require("./followers"));
 
 module.exports = router;
