@@ -14,7 +14,7 @@
         <div class="col-md-4">
           <h1 class="center"><%= userName %></h1>
           <a class="nav-link" href="/profile">view my profile</a>
-          <form action="/post" method="post" class='form-signin'>
+          <form action="/" method="post" class='form-signin'>
             <div>
               <textarea name="content" maxlength="140" placeholder="Compose new micropost..."></textarea>
             </div>
@@ -29,7 +29,7 @@
               <%= micropost.content %>
               <div id="time" created_at=<% micropost.created_at %> />
               <script type="text/javascript" src="../public/javascripts/getAgo.js"></script>
-              <form action="/deletePost" method="post">
+              <form action="/" method="post">
                 <input type="hidden" name="postId" value=<%= micropost.id %>>
                 <button class="btn btn-sm btn-primary" type="submit">delete</button>
               </form>

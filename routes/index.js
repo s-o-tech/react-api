@@ -67,6 +67,46 @@ router.get("/", function (req, res, next) {
   }
 });
 
+router.post("/", function (req, res, next) {
+  const userId = req.user.id;
+  if (Object.keys(req.body)[0] === "content") {
+    const content = req.body.content;
+    knex("microposts")
+      .insert({ content: content, user_id: userId })
+      .then(function (resp) {
+        res.redirect("/");
+      })
+      .catch(function (err) {
+        console.error(err);
+        res.render("/", {
+          title: "",
+          errorMessage: [content],
+          isAuth: false,
+        });
+      });
+  } else if (Object.keys(req.body)[0] === "postId") {
+    const postId = req.body.postId;
+
+    knex("microposts")
+      .where({
+        id: postId,
+        user_id: userId,
+      })
+      .del()
+      .then(function (resp) {
+        res.redirect("/");
+      })
+      .catch(function (err) {
+        console.error(err);
+        res.render("/", {
+          title: "",
+          errorMessage: [`Posting failed`],
+          isAuth: false,
+        });
+      });
+  }
+});
+
 router.use("/users", require("./users"));
 router.use("/signup", require("./signup"));
 router.use("/signin", require("./signin"));
@@ -74,7 +114,5 @@ router.use("/logout", require("./logout"));
 router.use("/edit", require("./edit"));
 router.use("/profile", require("./profile"));
 router.use("/users/*", require("./profile"));
-router.use("/post", require("./post"));
-router.use("/deletePost", require("./deletePost"));
 
 module.exports = router;
