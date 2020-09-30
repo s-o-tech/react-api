@@ -89,7 +89,8 @@ router.post("/", function (req, res, next) {
     knex("relationships")
       .insert({ follower_id: followerId, followed_id: followedId })
       .then(function (resp) {
-        res.redirect("/users/2");
+        console.debug(`/users/${followedId}`);
+        res.redirect(`/users/${followedId}`);
       })
       .catch(function (err) {
         console.error(err);
@@ -108,7 +109,8 @@ router.post("/", function (req, res, next) {
       })
       .del()
       .then(function (resp) {
-        res.redirect("/users/2");
+        console.debug(`/users/${followedId}`);
+        res.redirect(`/users/${followedId}`);
       })
       .catch(function (err) {
         console.debug("error");
