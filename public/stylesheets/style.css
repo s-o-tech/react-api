@@ -27,3 +27,14 @@
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+.form-micropost {
+  width: 100%;
+  max-width: 330px;
+  padding: 15px;
+  margin: 0 auto;
+}
+
+.center {
+  text-align: center;
+}

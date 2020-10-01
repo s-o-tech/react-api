@@ -23,6 +23,7 @@ router.get("/", function (req, res, next) {
           users: userRows,
           pagination: pagination,
           isAdmin: req.user.isAdmin,
+          userId: req.user.id,
         });
       })
       .catch(function (err) {
@@ -42,10 +43,20 @@ router.post(
     if (req.isAuthenticated() && req.user.isAdmin) {
       const target = req.body.target;
       knex("users")
-        .where({ name: target })
+        .where({ id: target })
         .del()
         .then(function (result) {
-          next();
+          knex("relationships")
+            .where({ follower_id: target })
+            .orWhere({ followed_id: target })
+            .del()
+            .then(function (result) {
+              next();
+            })
+            .catch(function (err) {
+              console.error(err);
+              next();
+            });
         })
         .catch(function (err) {
           console.error(err);
