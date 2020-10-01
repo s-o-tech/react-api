@@ -93,7 +93,7 @@ router.get("/", function (req, res, next) {
       });
   } else {
     res.render("index", {
-      title: "MicroPost",
+      title: "",
       message: "",
       isAuth: req.isAuthenticated(),
     });

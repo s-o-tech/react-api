@@ -79,9 +79,14 @@
           </nav>
         </div>
       </div>
+    <% } else { %>
+        <div class="center jumbotron">
+          <h1>Welcome to the MicroPost App</h1>
+          <a class="btn btn-lg btn-primary" href="/signup" role="button">Sign up now!</a>
+        </div>
     <% } %>
   </body>
-  
+
   <footer>
     <%- include('./footer');%>
   </footer>
