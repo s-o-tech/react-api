@@ -9,7 +9,8 @@ exports.up = function(knex, Promise) {
         t.string('email').unique();
         t.string('password').notNullable();
         t.boolean('isAdmin').defaultTo(false);
-        t.string('remember');
+        t.string('reset_token').defaultTo(null);
+        t.dateTime('reset_limit').defaultTo(null);
       });
     }else{
       return new Error("The table already exists");
