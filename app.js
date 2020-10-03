@@ -6,6 +6,9 @@ const logger = require("morgan");
 const flash = require("express-flash");
 const bodyParser = require("body-parser");
 const session = require("express-session");
+const MySQLStore = require("express-mysql-session");
+const options = require("./db/config");
+const sesisonStore = new MySQLStore(options);
 
 const app = express();
 
@@ -27,6 +30,7 @@ app.use(
     secret: "secret",
     resave: false,
     saveUninitialized: false,
+    store: sesisonStore,
     cookie: {
       maxAge: 60 * 60 * 1000,
     },

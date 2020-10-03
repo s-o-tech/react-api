@@ -71,7 +71,6 @@ router.get("/", function (req, res, next) {
         const pagination = result.pagination;
         res.render("index", {
           title: "",
-          message: "",
           isAuth: req.isAuthenticated(),
           userId: userId,
           userName: userName,
@@ -94,7 +93,6 @@ router.get("/", function (req, res, next) {
   } else {
     res.render("index", {
       title: "",
-      message: "",
       isAuth: req.isAuthenticated(),
     });
   }
@@ -146,6 +144,7 @@ router.use("/signin", require("./signin"));
 router.use("/logout", require("./logout"));
 router.use("/edit", require("./edit"));
 router.use("/userlist", require("./userlist"));
+router.use("/password_resets", require("./password_resets"));
 router.use("/profile", require("./profile"));
 router.use("/users/[+-]?\\d+", require("./profile"));
 router.use("/users/[+-]?\\d+/following", require("./following"));

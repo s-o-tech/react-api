@@ -16,6 +16,14 @@ router.post(
     failureRedirect: "/signin",
     failureFlash: true,
   }),
+  function (req, res, next) {
+    if (!req.body.remember_me) {
+      req.session.cookie.expires = false;
+      return next();
+    }
+    req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
+    return next();
+  },
   function (req, res) {
     res.redirect("/");
   }
