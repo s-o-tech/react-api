@@ -4,7 +4,6 @@ const knex = require("../db/knex");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
-const { limit } = require("../db/knex");
 // const smtpConfig = nodemailer.createTransport({
 //   host: "SMTP SERVER",
 //   port: 25,
@@ -23,7 +22,7 @@ const smtpGmail = nodemailer.createTransport({
     user:"testmailsend102@gmail.com",
     pass:"mailsendtest102"
   }
-})
+});
 
 router.get("/new", function (req, res, next) {
   res.render("password_resets", {
@@ -90,8 +89,8 @@ router.post("/", function (req, res, next) {
 
   knex("users")
   .where({email:email})
-  .update({reset_token:token,reset_limit:knex.fn.now()})
-  .then(function(resp){
+  .update({reset_token:bcrypt.hashSync(token,10),reset_limit:knex.fn.now()})
+  .then(function(result){
     smtpGmail.sendMail(mailOptions, function(err) {
       if (err) {
         console.error(err);
@@ -101,7 +100,6 @@ router.post("/", function (req, res, next) {
           isAuth: req.isAuthenticated(),
         });
       } else {
-        console.log("localhost:3000/password_resets/" + token + "/edit?email=" + encodeURIComponent(email))
         res.render("index", {
           title: "MicroPost",
           message: "Email sent with password reset instructions",
@@ -112,10 +110,14 @@ router.post("/", function (req, res, next) {
   })
   .catch(function(err){
     console.error(err);
+    res.render("password_resets_edit", {
+      title: "Forgot Password",
+      errorMessage: ["DB error"],
+      isAuth: req.isAuthenticated(),
+      email: email,
+    }); 
   });
-  
 });
-
 
 router.get("/:token/edit",function(req,res){
   const email = decodeURI(req.query.email);
@@ -124,36 +126,91 @@ router.get("/:token/edit",function(req,res){
     title: "Forgot Password",
     errorMessage: [],
     isAuth: req.isAuthenticated(),
+    email: email,
   });
-
 });
 
-router.post("/:token/edit",function(req,res){
-
-
+router.post("/:token/edit",function(req,res,next){
   const token = req.params.token;
-  knex("users")
+  const email = req.body.email;
+  const password = req.body.password;
+  const passwordConfirm = req.body.confirmation;
+
+  if(password != passwordConfirm){
+    res.render("password_resets_edit", {
+      title: "Forgot Password",
+      errorMessage: ["Password doesn't match"],
+      isAuth: req.isAuthenticated(),
+      email: email,
+    });
+  } else {
+    knex("users")
     .where({email:email})
     .then(function(result){
-      result = JSON.parse(JSON.stringify(result));
-      if(result.length === 1){
-        if(Date.parse(result[0].reset_limit) >= Date.now() - (2 * 60 * 60 * 1000)){
-          console.log("ok");
+      result = JSON.parse(JSON.stringify(result))[0];
+      if(result !== undefined){
+        if(Date.parse(result.reset_limit) >= Date.now() - (2 * 60 * 60 * 1000)){
+          if(bcrypt.compareSync(token,result.reset_token)){
+            //password登録
+            next();
+          } else {
+            res.render("password_resets_edit", {
+              title: "Forgot Password",
+              errorMessage: ["Token error Please issue the token again."],
+              isAuth: req.isAuthenticated(),
+              email: email,
+            });
+          }
         }
         else{
-          console.log("no")
+          res.render("password_resets_edit", {
+            title: "Forgot Password",
+            errorMessage: ["The tokens have expired Please issue the token again"],
+            isAuth: req.isAuthenticated(),
+            email: email,
+          });
         }
+      } else {
         res.render("password_resets_edit", {
           title: "Forgot Password",
-          errorMessage: ["sendMail Error",req.params.token],
+          errorMessage: ["DB error Please issue the token again"],
           isAuth: req.isAuthenticated(),
-        });
+          email: email,
+        }); 
       }
     })
     .catch(function(err){
       console.error(err);
+      res.render("password_resets_edit", {
+        title: "Forgot Password",
+        errorMessage: ["DB error Please issue the token again"],
+        isAuth: req.isAuthenticated(),
+        email: email,
+      }); 
     });
-
-})
+  }
+}, function(req,res){
+  const email = req.body.email;
+  const password = req.body.password;
+  knex("users")
+    .where({email:email})
+    .update({password:bcrypt.hashSync(password,10)})
+    .then(function(result){
+      res.render("index", {
+        title: "MicroPost",
+        message: "Your password has been reset",
+        isAuth: req.isAuthenticated(),
+      });
+    })
+    .catch(function(err){
+      console.error(err);
+      res.render("password_resets_edit", {
+        title: "Forgot Password",
+        errorMessage: ["DB error Please issue the token again"],
+        isAuth: req.isAuthenticated(),
+        email: email,
+      }); 
+    });
+});
 
 module.exports = router;
