@@ -217,7 +217,11 @@ router.post(
     const password = req.body.password;
     knex("users")
       .where({ email: email })
-      .update({ password: bcrypt.hashSync(password, 10) })
+      .update({
+        password: bcrypt.hashSync(password, 10),
+        reset_token: null,
+        reset_limit: null,
+      })
       .then(function (result) {
         res.render("index", {
           title: "MicroPost",

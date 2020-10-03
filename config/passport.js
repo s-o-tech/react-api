@@ -13,7 +13,6 @@ module.exports = function (app) {
 
   passport.use(require("./passport/local"));
 
-
   app.use(passport.initialize());
   app.use(passport.session());
 
