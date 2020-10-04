@@ -1,14 +1,9 @@
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
-const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const flash = require("express-flash");
 const bodyParser = require("body-parser");
-const session = require("express-session");
-const MySQLStore = require("express-mysql-session");
-const options = require("./db/config");
-const sesisonStore = new MySQLStore(options);
 
 const app = express();
 
@@ -19,24 +14,12 @@ app.set("view engine", "ejs");
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(flash());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(
-  session({
-    secret: "secret",
-    resave: false,
-    saveUninitialized: false,
-    store: sesisonStore,
-    cookie: {
-      maxAge: 60 * 60 * 1000,
-    },
-  })
-);
-
+require("./config/session")(app);
 require("./config/passport")(app);
 
 // router

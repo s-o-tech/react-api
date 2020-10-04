@@ -143,11 +143,6 @@ router.use("/signup", require("./signup"));
 router.use("/signin", require("./signin"));
 router.use("/logout", require("./logout"));
 router.use("/edit", require("./edit"));
-router.use("/userlist", require("./userlist"));
 router.use("/password_resets", require("./password_resets"));
-router.use("/profile", require("./profile"));
-router.use("/users/[+-]?\\d+", require("./profile"));
-router.use("/users/[+-]?\\d+/following", require("./following"));
-router.use("/users/[+-]?\\d+/followers", require("./followers"));
 
 module.exports = router;

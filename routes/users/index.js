@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const knex = require("../db/knex");
+const knex = require("../../db/knex");
 
 router.get("/", function (req, res, next) {
   if (req.isAuthenticated()) {
@@ -29,7 +29,7 @@ router.get("/", function (req, res, next) {
       .catch(function (err) {
         // error処理は変更予定
         console.error(err);
-        res.redirect("/userlist");
+        res.redirect("/users");
       });
   } else {
     res.redirect("/signin");
@@ -67,8 +67,13 @@ router.post(
     }
   },
   function (req, res) {
-    res.redirect("/userlist");
+    res.redirect("/users");
   }
 );
+
+router.use("/profile", require("./profile"));
+router.use("/:userid", require("./profile"));
+router.use("/:userid/following", require("./following"));
+router.use("/:userid/followers", require("./followers"));
 
 module.exports = router;

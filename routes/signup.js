@@ -1,7 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const knex = require("../db/knex");
-const bcrypt = require("bcrypt");
+const { validationResult } = require("express-validator");
+const User = require("../models/user");
+const SignupParamValidator = require("../midleware/validators/signupParamValidator");
 
 router.get("/", function (req, res, next) {
   res.render("signup", {
@@ -11,56 +12,38 @@ router.get("/", function (req, res, next) {
   });
 });
 
-router.post("/", function (req, res, next) {
-  const username = req.body.username;
-  const password = bcrypt.hashSync(req.body.password, 10);
-  const passwordConfirm = req.body.confirmation;
-  const email = req.body.email;
-  const errorMessage = [];
-
-  if (username === "") {
-    errorMessage.push("username can't be blank");
-  }
-
-  if (password === "") {
-    errorMessage.push("password can't be blank");
-  }
-
-  if (
-    email === "" ||
-    !/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-      email
-    )
-  ) {
-    errorMessage.push("email is invalid");
-  }
-
-  if (bcrypt.compareSync(password, passwordConfirm)) {
-    errorMessage.push("Password doesn't match.");
-  }
-
-  if (errorMessage.length !== 0) {
+router.post("/", SignupParamValidator, function (req, res, next) {
+  const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
+    // Build your resulting errors however you want! String, object, whatever - it works!
+    return `${param}: ${msg}`;
+  };
+  const result = validationResult(req).formatWith(errorFormatter);
+  if (!result.isEmpty()) {
     res.render("signup", {
       title: "Sign up",
-      errorMessage: errorMessage,
+      errorMessage: result.array(),
       isAuth: req.isAuthenticated(),
     });
-  } else {
-    knex("users")
-      .insert({ name: username, password: password, email: email })
-      .then(function (resp) {
-        // あとで変更予定
-        res.redirect("/");
-      })
-      .catch(function (err) {
-        console.error(err);
-        res.render("signup", {
-          title: "Sign up",
-          errorMessage: [`This username(${username}) is already used`],
-          isAuth: req.isAuthenticated(),
-        });
-      });
+    return;
   }
+
+  const username = req.body.username;
+  const email = req.body.email;
+  const password = req.body.password;
+
+  User.createUser(username, email, password)
+    .then(function (resp) {
+      // あとで変更予定
+      res.redirect("/");
+    })
+    .catch(function (err) {
+      console.error(err);
+      res.render("signup", {
+        title: "Sign up",
+        errorMessage: [`This username(${username}) is already used`],
+        isAuth: req.isAuthenticated(),
+      });
+    });
 });
 
 module.exports = router;
