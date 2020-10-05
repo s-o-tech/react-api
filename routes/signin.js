@@ -3,7 +3,7 @@ const router = express.Router();
 const passport = require("passport");
 
 router.get("/", function (req, res, next) {
-  res.render("signin", {
+  res.render("pages/signin", {
     title: "Sign in",
     isAuth: req.isAuthenticated(),
     errorMessage: req.flash("error"),

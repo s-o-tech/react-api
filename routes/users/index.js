@@ -16,7 +16,7 @@ router.get("/", function (req, res, next) {
         const userRows = JSON.parse(JSON.stringify(result.data));
         const pagination = result.pagination;
 
-        res.render("userlist", {
+        res.render("pages/userlist", {
           title: "Userlist",
           message: "",
           isAuth: req.isAuthenticated(),

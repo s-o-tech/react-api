@@ -5,7 +5,7 @@ const User = require("../models/user");
 const SignupParamValidator = require("../midleware/validators/signupParamValidator");
 
 router.get("/", function (req, res, next) {
-  res.render("signup", {
+  res.render("pages/signup", {
     title: "Sign Up",
     errorMessage: [],
     isAuth: req.isAuthenticated(),
@@ -19,7 +19,7 @@ router.post("/", SignupParamValidator, function (req, res, next) {
   };
   const result = validationResult(req).formatWith(errorFormatter);
   if (!result.isEmpty()) {
-    res.render("signup", {
+    res.render("pages/signup", {
       title: "Sign up",
       errorMessage: result.array(),
       isAuth: req.isAuthenticated(),
@@ -38,7 +38,7 @@ router.post("/", SignupParamValidator, function (req, res, next) {
     })
     .catch(function (err) {
       console.error(err);
-      res.render("signup", {
+      res.render("pages/signup", {
         title: "Sign up",
         errorMessage: [`This username(${username}) is already used`],
         isAuth: req.isAuthenticated(),

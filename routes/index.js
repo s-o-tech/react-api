@@ -25,7 +25,7 @@ router.get("/", function (req, res, next) {
       })
       .catch(function (err) {
         console.error(err);
-        res.render("index", {
+        res.render("pages/index", {
           title: "",
           errorMessage: [err.sqlMessage],
           isAuth: req.isAuthenticated(),
@@ -40,7 +40,7 @@ router.get("/", function (req, res, next) {
       })
       .catch(function (err) {
         console.error(err);
-        res.render("index", {
+        res.render("pages/index", {
           title: "",
           errorMessage: [err.sqlMessage],
           isAuth: req.isAuthenticated(),
@@ -55,7 +55,7 @@ router.get("/", function (req, res, next) {
       })
       .catch(function (err) {
         console.error(err);
-        res.render("index", {
+        res.render("pages/index", {
           title: "",
           errorMessage: [err.sqlMessage],
           isAuth: req.isAuthenticated(),
@@ -69,7 +69,7 @@ router.get("/", function (req, res, next) {
       .then(function (result) {
         const microposts = JSON.parse(JSON.stringify(result.data));
         const pagination = result.pagination;
-        res.render("index", {
+        res.render("pages/index", {
           title: "",
           isAuth: req.isAuthenticated(),
           userId: userId,
@@ -83,7 +83,7 @@ router.get("/", function (req, res, next) {
       })
       .catch(function (err) {
         console.error(err);
-        res.render("index", {
+        res.render("pages/index", {
           title: "",
           errorMessage: [err.sqlMessage],
           isAuth: req.isAuthenticated(),
@@ -91,7 +91,7 @@ router.get("/", function (req, res, next) {
         });
       });
   } else {
-    res.render("index", {
+    res.render("pages/index", {
       title: "",
       isAuth: req.isAuthenticated(),
     });

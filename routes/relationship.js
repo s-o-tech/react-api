@@ -13,7 +13,7 @@ router.post("/", function (request, response) {
     })
     .catch(function (err) {
       console.error(err);
-      response.render("index", {
+      response.render("pages/index", {
         title: "",
         errorMessage: [err.sqlMessage],
         isAuth: false,
@@ -32,7 +32,7 @@ router.post("/delete", function (request, response) {
     })
     .catch(function (err) {
       console.error(err);
-      response.render("index", {
+      response.render("pages/index", {
         title: "",
         errorMessage: [err.sqlMessage],
         isAuth: false,

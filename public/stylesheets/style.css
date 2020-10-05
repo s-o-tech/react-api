@@ -1,40 +1,110 @@
 .form-signin {
-  width: 100%;
-  max-width: 330px;
-  padding: 15px;
-  margin: 0 auto;
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
 }
+
 .form-signin .checkbox {
-  font-weight: 400;
+    font-weight: 400;
 }
+
 .form-signin .form-control {
-  position: relative;
-  box-sizing: border-box;
-  height: auto;
-  padding: 10px;
-  font-size: 16px;
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
 }
+
 .form-signin .form-control:focus {
-  z-index: 2;
+    z-index: 2;
 }
+
 .form-signin input[type="email"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
 }
+
 .form-signin input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .form-micropost {
-  width: 100%;
-  max-width: 330px;
-  padding: 15px;
-  margin: 0 auto;
+    width: 100%;
+    max-width: 330px;
+    padding: 15px;
+    margin: 0 auto;
 }
 
 .center {
-  text-align: center;
+    text-align: center;
+}
+
+/* sidebar */
+
+aside section.user_info {
+    margin-top: 20px;
+}
+
+aside section {
+    padding: 10px 0;
+    margin-top: 20px;
+}
+
+aside aside section:first-child {
+    border: 0;
+    padding-top: 0;
+}
+
+aside span {
+    display: block;
+    margin-bottom: 3px;
+    line-height: 1;
+}
+
+aside h1 {
+    font-size: 1.4em;
+    text-align: left;
+    letter-spacing: -1px;
+    margin-bottom: 3px;
+    margin-top: 0px;
+}
+
+.stats {
+    overflow: auto;
+    margin-top: 0;
+    padding: 0;
+}
+
+.stats a {
+    float: left;
+    padding: 0 10px;
+    border-left: 1px solid;
+    color: gray;
+}
+
+.stats a:first-child {
+    padding-left: 0;
+    border: 0;
+}
+
+.stats a:hover {
+    text-decoration: none;
+    color: blue;
+}
+
+.stats strong {
+    display: block;
+}
+
+/* forms */
+input, textarea, select, .uneditable-input {
+    border: 1px solid #bbb;
+    width: 100%;
+    margin-bottom: 15px;
+@include box_sizing;
 }

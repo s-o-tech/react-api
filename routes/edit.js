@@ -4,7 +4,7 @@ const knex = require("../db/knex");
 const bcrypt = require("bcrypt");
 
 router.get("/", function (req, res, next) {
-  res.render("edit", {
+  res.render("pages/edit", {
     title: "Edit User",
     errorMessage: [],
     isAuth: req.isAuthenticated(),
@@ -38,7 +38,7 @@ router.post("/", function (req, res, next) {
   }
 
   if (errorMessage.length !== 0) {
-    res.render("edit", {
+    res.render("pages/edit", {
       title: "Edit User",
       errorMessage: errorMessage,
       isAuth: req.isAuthenticated(),
@@ -50,7 +50,7 @@ router.post("/", function (req, res, next) {
       .where({ id: userID })
       .update({ name: newUserName, password: newPassword, email: newEmail })
       .then(function () {
-        res.render("index", {
+        res.render("pages/index", {
           title: "MicroPost",
           message: `Welcome ${newUserName}! Please check your email to activate your account.`,
           isAuth: req.isAuthenticated(),
@@ -60,7 +60,7 @@ router.post("/", function (req, res, next) {
         console.error(err);
         // usernameが重複している場合
         if (/users.users_name_unique/.test(err.sqlMessage)) {
-          res.render("edit", {
+          res.render("pages/edit", {
             title: "Edit User",
             errorMessage: [`This username(${newUserName}) is already used`],
             isAuth: req.isAuthenticated(),
@@ -68,7 +68,7 @@ router.post("/", function (req, res, next) {
         }
         // emailが重複している場合
         else if (/users.users_email_unique/.test(err.sqlMessage)) {
-          res.render("edit", {
+          res.render("pages/edit", {
             title: "Edit User",
             errorMessage: [`This email(${newEmail}) is already used`],
             isAuth: req.isAuthenticated(),
@@ -77,7 +77,7 @@ router.post("/", function (req, res, next) {
         // その他のエラーはSQLから出力された文をそのまま表示させます
         // ここの仕様は応相談
         else {
-          res.render("edit", {
+          res.render("pages/edit", {
             title: "Edit User",
             errorMessage: [err.sqlMessage],
             isAuth: req.isAuthenticated(),

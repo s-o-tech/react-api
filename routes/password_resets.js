@@ -25,7 +25,7 @@ const smtpGmail = nodemailer.createTransport({
 });
 
 router.get("/new", function (req, res, next) {
-  res.render("password_resets", {
+  res.render("pages/password_resets", {
     title: "Forgot Password",
     errorMessage: [],
     isAuth: req.isAuthenticated(),
@@ -41,7 +41,7 @@ router.post(
       .where({ email: email })
       .then(function (resp) {
         if (resp.length !== 1) {
-          res.render("password_resets", {
+          res.render("pages/password_resets", {
             title: "Forgot Password",
             errorMessage: ["Email address not found"],
             isAuth: req.isAuthenticated(),
@@ -53,7 +53,7 @@ router.post(
       })
       .catch(function (err) {
         console.error(err);
-        res.render("password_resets", {
+        res.render("pages/password_resets", {
           title: "Forgot Password",
           errorMessage: ["DB Error"],
           isAuth: req.isAuthenticated(),
@@ -109,13 +109,13 @@ router.post(
         smtpGmail.sendMail(mailOptions, function (err) {
           if (err) {
             console.error(err);
-            res.render("password_resets", {
+            res.render("pages/password_resets", {
               title: "Forgot Password",
               errorMessage: ["sendMail Error"],
               isAuth: req.isAuthenticated(),
             });
           } else {
-            res.render("index", {
+            res.render("pages/index", {
               title: "MicroPost",
               message: "Email sent with password reset instructions",
               isAuth: req.isAuthenticated(),
@@ -125,7 +125,7 @@ router.post(
       })
       .catch(function (err) {
         console.error(err);
-        res.render("password_resets_edit", {
+        res.render("pages/password_resets_edit", {
           title: "Forgot Password",
           errorMessage: ["DB error"],
           isAuth: req.isAuthenticated(),
@@ -138,7 +138,7 @@ router.post(
 router.get("/:token/edit", function (req, res) {
   const email = decodeURI(req.query.email);
   // emailも追加
-  res.render("password_resets_edit", {
+  res.render("pages/password_resets_edit", {
     title: "Forgot Password",
     errorMessage: [],
     isAuth: req.isAuthenticated(),
@@ -155,7 +155,7 @@ router.post(
     const passwordConfirm = req.body.confirmation;
 
     if (password !== passwordConfirm) {
-      res.render("password_resets_edit", {
+      res.render("pages/password_resets_edit", {
         title: "Forgot Password",
         errorMessage: ["Password doesn't match"],
         isAuth: req.isAuthenticated(),
@@ -175,7 +175,7 @@ router.post(
                 // password登録
                 next();
               } else {
-                res.render("password_resets_edit", {
+                res.render("pages/password_resets_edit", {
                   title: "Forgot Password",
                   errorMessage: ["Token error Please issue the token again."],
                   isAuth: req.isAuthenticated(),
@@ -183,7 +183,7 @@ router.post(
                 });
               }
             } else {
-              res.render("password_resets_edit", {
+              res.render("pages/password_resets_edit", {
                 title: "Forgot Password",
                 errorMessage: [
                   "The tokens have expired Please issue the token again",
@@ -193,7 +193,7 @@ router.post(
               });
             }
           } else {
-            res.render("password_resets_edit", {
+            res.render("pages/password_resets_edit", {
               title: "Forgot Password",
               errorMessage: ["DB error Please issue the token again"],
               isAuth: req.isAuthenticated(),
@@ -203,7 +203,7 @@ router.post(
         })
         .catch(function (err) {
           console.error(err);
-          res.render("password_resets_edit", {
+          res.render("pages/password_resets_edit", {
             title: "Forgot Password",
             errorMessage: ["DB error Please issue the token again"],
             isAuth: req.isAuthenticated(),
@@ -223,7 +223,7 @@ router.post(
         reset_limit: null,
       })
       .then(function (result) {
-        res.render("index", {
+        res.render("pages/index", {
           title: "MicroPost",
           message: "Your password has been reset",
           isAuth: req.isAuthenticated(),
@@ -231,7 +231,7 @@ router.post(
       })
       .catch(function (err) {
         console.error(err);
-        res.render("password_resets_edit", {
+        res.render("pages/password_resets_edit", {
           title: "Forgot Password",
           errorMessage: ["DB error Please issue the token again"],
           isAuth: req.isAuthenticated(),

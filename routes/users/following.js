@@ -23,7 +23,7 @@ router.get("/", function (req, res, next) {
     })
     .catch(function (err) {
       console.error(err);
-      res.render("index", {
+      res.render("pages/index", {
         title: "",
         errorMessage: [err.sqlMessage],
         isAuth: req.isAuthenticated(),
@@ -38,7 +38,7 @@ router.get("/", function (req, res, next) {
     })
     .catch(function (err) {
       console.error(err);
-      res.render("index", {
+      res.render("pages/index", {
         title: "",
         errorMessage: [err.sqlMessage],
         isAuth: req.isAuthenticated(),
@@ -53,7 +53,7 @@ router.get("/", function (req, res, next) {
     })
     .catch(function (err) {
       console.error(err);
-      res.render("index", {
+      res.render("pages/index", {
         title: "",
         errorMessage: [err.sqlMessage],
         isAuth: req.isAuthenticated(),
@@ -64,7 +64,7 @@ router.get("/", function (req, res, next) {
   User.following(userId)
     .then(function (result) {
       const following = JSON.parse(JSON.stringify(result));
-      res.render("following", {
+      res.render("pages/following", {
         title: "",
         message: "",
         isAuth: req.isAuthenticated(),
@@ -77,7 +77,7 @@ router.get("/", function (req, res, next) {
     })
     .catch(function (err) {
       console.error(err);
-      res.render("following", {
+      res.render("pages/following", {
         title: "",
         errorMessage: [err.sqlMessage],
         isAuth: req.isAuthenticated(),
