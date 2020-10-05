@@ -25,7 +25,7 @@ router.get("/", function (req, res, next) {
       })
       .catch(function (err) {
         console.error(err);
-        res.render("index", {
+        res.render("pages/index", {
           title: "",
           errorMessage: [err.sqlMessage],
           isAuth: req.isAuthenticated(),
@@ -40,7 +40,7 @@ router.get("/", function (req, res, next) {
       })
       .catch(function (err) {
         console.error(err);
-        res.render("index", {
+        res.render("pages/index", {
           title: "",
           errorMessage: [err.sqlMessage],
           isAuth: req.isAuthenticated(),
@@ -55,7 +55,7 @@ router.get("/", function (req, res, next) {
       })
       .catch(function (err) {
         console.error(err);
-        res.render("index", {
+        res.render("pages/index", {
           title: "",
           errorMessage: [err.sqlMessage],
           isAuth: req.isAuthenticated(),
@@ -69,7 +69,7 @@ router.get("/", function (req, res, next) {
       .then(function (result) {
         const microposts = JSON.parse(JSON.stringify(result.data));
         const pagination = result.pagination;
-        res.render("index", {
+        res.render("pages/index", {
           title: "",
           isAuth: req.isAuthenticated(),
           userId: userId,
@@ -83,7 +83,7 @@ router.get("/", function (req, res, next) {
       })
       .catch(function (err) {
         console.error(err);
-        res.render("index", {
+        res.render("pages/index", {
           title: "",
           errorMessage: [err.sqlMessage],
           isAuth: req.isAuthenticated(),
@@ -91,7 +91,7 @@ router.get("/", function (req, res, next) {
         });
       });
   } else {
-    res.render("index", {
+    res.render("pages/index", {
       title: "",
       isAuth: req.isAuthenticated(),
     });
@@ -138,16 +138,12 @@ router.post("/", function (req, res, next) {
   }
 });
 
-router.use("/users", require("./users"));
 router.use("/signup", require("./signup"));
 router.use("/signin", require("./signin"));
 router.use("/logout", require("./logout"));
-router.use("/edit", require("./edit"));
-router.use("/userlist", require("./userlist"));
 router.use("/password_resets", require("./password_resets"));
-router.use("/profile", require("./profile"));
-router.use("/users/[+-]?\\d+", require("./profile"));
-router.use("/users/[+-]?\\d+/following", require("./following"));
-router.use("/users/[+-]?\\d+/followers", require("./followers"));
+router.use("/edit", require("./edit"));
+router.use("/users", require("./users"));
+router.use("/relationship", require("./relationship"));
 
 module.exports = router;

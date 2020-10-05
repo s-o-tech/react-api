@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const knex = require("../db/knex");
+const knex = require("../../db/knex");
+const User = require("../../models/user");
 
 router.get("/", function (req, res, next) {
   const userId = req.user.id;
@@ -22,7 +23,7 @@ router.get("/", function (req, res, next) {
     })
     .catch(function (err) {
       console.error(err);
-      res.render("index", {
+      res.render("pages/index", {
         title: "",
         errorMessage: [err.sqlMessage],
         isAuth: req.isAuthenticated(),
@@ -31,54 +32,52 @@ router.get("/", function (req, res, next) {
     });
 
   knex("relationships")
-    .where("follower_id", targetUserId)
+    .where("follower_id", userId)
     .then(function (result) {
       totalFollowing = result.length;
     })
     .catch(function (err) {
       console.error(err);
-      res.render("index", {
+      res.render("pages/index", {
         title: "",
         errorMessage: [err.sqlMessage],
         isAuth: req.isAuthenticated(),
-        userId: targetUserId,
+        userId: userId,
       });
     });
 
   knex("relationships")
-    .where("followed_id", targetUserId)
+    .where("followed_id", userId)
     .then(function (result) {
       totalFollowers = result.length;
     })
     .catch(function (err) {
       console.error(err);
-      res.render("index", {
+      res.render("pages/index", {
         title: "",
         errorMessage: [err.sqlMessage],
         isAuth: req.isAuthenticated(),
-        userId: targetUserId,
+        userId: userId,
       });
     });
 
-  knex("relationships")
-    .join("users", "relationships.follower_id", "=", "users.id")
-    .where("followed_id", targetUserId)
+  User.following(userId)
     .then(function (result) {
-      const followers = JSON.parse(JSON.stringify(result));
-      res.render("followers", {
+      const following = JSON.parse(JSON.stringify(result));
+      res.render("pages/following", {
         title: "",
         message: "",
         isAuth: req.isAuthenticated(),
         userName: userName,
-        userId: targetUserId,
+        userId: userId,
         totalFollowing: totalFollowing,
         totalFollowers: totalFollowers,
-        followers: followers,
+        following: following,
       });
     })
     .catch(function (err) {
       console.error(err);
-      res.render("index", {
+      res.render("pages/following", {
         title: "",
         errorMessage: [err.sqlMessage],
         isAuth: req.isAuthenticated(),

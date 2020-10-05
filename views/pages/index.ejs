@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body>
+<%- include('../partials/header'); %>
+<div class="container">
+    <h1><%= title; %></h1>
+    <% if(typeof message !== "undefined"){ %>
+        <div class="alert alert-primary">
+            <%= message; %>
+        </div>
+    <% } %>
+    <% if(isAuth){ %>
+        <div class="row">
+            <aside class="col-md-4">
+                <section class="user_info">
+                    <%- include('../partials/user_info'); %>
+                </section>
+                <section class="stats">
+                    <%- include('../partials/stats'); %>
+                </section>
+                <section class="micropost_form">
+                    <%- include('../partials/micropost_form'); %>
+                </section>
+            </aside>
+            <main class="col-md-8">
+                <h3>Micropost Feed</h3>
+                <%- include('../partials/feed'); %>
+            </main>
+        </div>
+    <% } else { %>
+        <div class="center jumbotron">
+            <h1>Welcome to the MicroPost App</h1>
+            <a class="btn btn-lg btn-primary" href="/signup" role="button">Sign up now!</a>
+        </div>
+    <% } %>
+
+</div>
+<%- include('../partials/footer'); %>
+</body>
+</html>

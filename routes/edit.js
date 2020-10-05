@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
-const knex = require("../db/knex");
-const bcrypt = require("bcrypt");
+const { validationResult } = require("express-validator");
+
+const User = require("../models/user");
+const EditParamValidator = require("../midleware/validators/editParamValidator");
 
 router.get("/", function (req, res, next) {
-  res.render("edit", {
+  res.render("pages/edit", {
     title: "Edit User",
     errorMessage: [],
     isAuth: req.isAuthenticated(),
@@ -12,78 +14,67 @@ router.get("/", function (req, res, next) {
   });
 });
 
-router.post("/", function (req, res, next) {
-  const userID = req.user.id;
-  const newUserName = req.body.username;
-  let newPassword = req.body.password;
-  const passwordConfirm = req.body.confirmation;
-  const newEmail = req.body.email;
-  const errorMessage = [];
-  if (newUserName === "") {
-    errorMessage.push("Username can't be blank");
-  }
-  if (newPassword === "") {
-    errorMessage.push("Password can't be blank");
-  }
-  if (
-    newEmail === "" ||
-    !/^[a-zA-Z0-9.!#$%&'*+=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
-      newEmail
-    )
-  ) {
-    errorMessage.push("Invalid Email");
-  }
-  if (newPassword !== passwordConfirm) {
-    errorMessage.push("Password doesn't match.");
-  }
-
-  if (errorMessage.length !== 0) {
-    res.render("edit", {
+router.post("/", EditParamValidator, function (req, res, next) {
+  const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
+    // Build your resulting errors however you want! String, object, whatever - it works!
+    return `${param}: ${msg}`;
+  };
+  const result = validationResult(req).formatWith(errorFormatter);
+  if (!result.isEmpty()) {
+    res.render("pages/edit", {
       title: "Edit User",
-      errorMessage: errorMessage,
+      errorMessage: result.array(),
       isAuth: req.isAuthenticated(),
     });
-  } else {
-    newPassword = bcrypt.hashSync(newPassword, 10);
+    return;
+  }
 
-    knex("users")
-      .where({ id: userID })
-      .update({ name: newUserName, password: newPassword, email: newEmail })
-      .then(function () {
-        res.render("index", {
-          title: "MicroPost",
-          message: `Welcome ${newUserName}! Please check your email to activate your account.`,
+  const userId = req.user.id;
+  const username = req.body.username;
+  const password = req.body.password;
+  const email = req.body.email;
+
+  User.update(userId, {
+    name: username,
+    password: password,
+    email: email,
+  })
+    .then(function () {
+      res.render("pages/index", {
+        title: "MicroPost",
+        userId: userId,
+        message: `Welcome ${username}! Please check your email to activate your account.`,
+        isAuth: req.isAuthenticated(),
+      });
+    })
+    .catch(function (err) {
+      console.error(err);
+      // usernameが重複している場合
+      if (/users.users_name_unique/.test(err.sqlMessage)) {
+        res.render("pages/edit", {
+          title: "Edit User",
+          errorMessage: [`This username(${username}) is already used`],
           isAuth: req.isAuthenticated(),
         });
-      })
-      .catch(function (err) {
-        console.error(err);
-        // usernameが重複している場合
-        if (/users.users_name_unique/.test(err.sqlMessage)) {
-          res.render("edit", {
-            title: "Edit User",
-            errorMessage: [`This username(${newUserName}) is already used`],
-            isAuth: req.isAuthenticated(),
-          });
-        }
-        // emailが重複している場合
-        else if (/users.users_email_unique/.test(err.sqlMessage)) {
-          res.render("edit", {
-            title: "Edit User",
-            errorMessage: [`This email(${newEmail}) is already used`],
-            isAuth: req.isAuthenticated(),
-          });
-        }
-        // その他のエラーはSQLから出力された文をそのまま表示させます
-        // ここの仕様は応相談
-        else {
-          res.render("edit", {
-            title: "Edit User",
-            errorMessage: [err.sqlMessage],
-            isAuth: req.isAuthenticated(),
-          });
-        }
-      });
-  }
+      }
+      // emailが重複している場合
+      else if (/users.users_email_unique/.test(err.sqlMessage)) {
+        res.render("pages/dit", {
+          title: "Edit User",
+          errorMessage: [`This email(${email}) is already used`],
+          isAuth: req.isAuthenticated(),
+        });
+      }
+      // その他のエラーはSQLから出力された文をそのまま表示させます
+      // ここの仕様は応相談
+      else {
+        res.render("pages/edit", {
+          title: "Edit User",
+          errorMessage: [err.sqlMessage],
+          isAuth: req.isAuthenticated(),
+        });
+      }
+    });
 });
+
 module.exports = router;

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%- include('../partials/head'); %>
+</head>
+<body>
+<%- include('../partials/header'); %>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <h1 class="center"><%= userName %></h1>
+            <a class="nav-link" href="/users/<%= userId %>/following"><%= totalFollowing %> following</a>
+            <a class="nav-link" href="/users/<%= userId %>/followers"><%= totalFollowers %> followers</a>
+        </div>
+        <div class="col-md-8">
+            <ul>
+                <h2>Followers</h2>
+                <% for(let follower of followers){ %>
+                    <li><a class="nav-link" href="/users/<%= follower.follower_id %>"><%= follower.name %></a></li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</div>
+<%- include('../partials/footer'); %>
+</body>
+</html>
