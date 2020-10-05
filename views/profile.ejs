@@ -10,14 +10,15 @@
   </div>
   <div class="col-md-8">
     <% if (userId !== targetUserId) { %>
-      <% if (!followed) { %>
-        <form action="/profile" method="post">
-          <input type="hidden" name="follow" value=<%= targetUserId %>>
+      <% if (relationship === null) { %>
+        <form action="/relationship" method="post">
+          <input type="hidden" name="followed_id" value=<%= targetUserId %>>
           <button class="btn btn-sm btn-primary" type="submit">Follow</button>
         </form>
       <% } else { %>
-        <form action="/profile" method="post">
-          <input type="hidden" name="unFollow" value=<%= targetUserId %>>
+        <form action="/relationship/delete" method="post">
+            <input type="hidden" name="followed_id" value=<%= targetUserId %>>
+            <input type="hidden" name="relationship_id" value=<%= relationship.id %>>
           <button class="btn btn-sm btn-primary" type="submit">UnFollow</button>
         </form>
       <% } %>

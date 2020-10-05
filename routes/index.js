@@ -138,11 +138,12 @@ router.post("/", function (req, res, next) {
   }
 });
 
-router.use("/users", require("./users"));
 router.use("/signup", require("./signup"));
 router.use("/signin", require("./signin"));
 router.use("/logout", require("./logout"));
-router.use("/edit", require("./edit"));
 router.use("/password_resets", require("./password_resets"));
+router.use("/edit", require("./edit"));
+router.use("/users", require("./users"));
+router.use("/relationship", require("./relationship"));
 
 module.exports = router;

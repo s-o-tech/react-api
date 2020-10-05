@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const knex = require("../../db/knex");
+const User = require("../../models/user");
 
 router.get("/", function (req, res, next) {
   const userId = req.user.id;
@@ -60,9 +61,7 @@ router.get("/", function (req, res, next) {
       });
     });
 
-  knex("relationships")
-    .join("users", "relationships.followed_id", "=", "users.id")
-    .where("follower_id", userId)
+  User.following(userId)
     .then(function (result) {
       const following = JSON.parse(JSON.stringify(result));
       res.render("following", {
