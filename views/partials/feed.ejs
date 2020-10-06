@@ -1,16 +1,10 @@
 
-<ul>
+<ol class="microposts">
     <% for(let micropost of microposts){ %>
-        <hr>
-        <%= micropost.content; %>
-        <div id="time" created_at=<% micropost.created_at; %> />
-        <script type="text/javascript" src="../public/javascripts/getAgo.js"></script>
-        <form action="/" method="post">
-            <input type="hidden" name="postId" value=<%= micropost.id; %>>
-            <button class="btn btn-sm btn-primary" type="submit">delete</button>
-        </form>
+        <%- include('./micropost', { micropost: micropost }); %>
     <% } %>
-</ul>
+</ol>
+
 <nav aria-label="Page navigation example">
     <ul class="pagination">
         <% if (pagination.currentPage != 1){ %>

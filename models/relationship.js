@@ -33,8 +33,30 @@ function remove(id) {
     });
 }
 
+async function stats(userId) {
+  const followingCount = await knex(TABLE_NAME)
+    .count()
+    .where({ follower_id: userId })
+    .then((result) => {
+      return result[0]["count(*)"];
+    });
+
+  const followerCount = await knex(TABLE_NAME)
+    .count()
+    .where({ followed_id: userId })
+    .then((result) => {
+      return result[0]["count(*)"];
+    });
+
+  return {
+    following_count: followingCount,
+    follower_count: followerCount,
+  };
+}
+
 module.exports = {
   create,
   find,
   remove,
+  stats,
 };

@@ -1,5 +1,7 @@
-const knex = require("../db/knex");
 const bcrypt = require("bcrypt");
+const knex = require("../db/knex");
+const Relationship = require("./relationship");
+const Micropost = require("./micropost");
 
 const TABLE_NAME = "users";
 
@@ -54,6 +56,27 @@ function verify(email, password) {
     });
 }
 
+async function find(userId) {
+  const user = await knex(TABLE_NAME)
+    .where({ id: userId })
+    .select("*")
+    .then((results) => {
+      if (results.length === 0) {
+        throw new Error("User not found");
+      }
+      return results[0];
+    });
+
+  const relationshipStats = await Relationship.stats(userId);
+  const micropostStats = await Micropost.stats(userId);
+
+  return {
+    ...user,
+    ...relationshipStats,
+    ...micropostStats,
+  };
+}
+
 function following(userId) {
   return knex("relationships")
     .join(TABLE_NAME, "relationships.followed_id", "=", "users.id")
@@ -70,6 +93,7 @@ module.exports = {
   createUser,
   update,
   verify,
+  find,
   following,
   followers,
 };

@@ -7,6 +7,7 @@ const EditParamValidator = require("../midleware/validators/editParamValidator")
 
 router.get("/", function (req, res, next) {
   res.render("pages/edit", {
+    current_user: req.user,
     title: "Edit User",
     errorMessage: [],
     isAuth: req.isAuthenticated(),

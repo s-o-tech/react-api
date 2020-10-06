@@ -1,13 +1,13 @@
 <div class="stats">
-    <a class="nav-link" href="/users/<%= userId; %>/following">
+    <a class="nav-link" href="/users/<%= user.id; %>/following">
         <strong id="following" class="stat">
-            <%= totalFollowing; %>
+            <%= user.following_count; %>
         </strong>
         following
     </a>
-    <a class="nav-link" href="/users/<%= userId; %>/followers">
+    <a class="nav-link" href="/users/<%= user.id; %>/followers">
         <strong id="followers" class="stat">
-            <%= totalFollowers; %>
+            <%= user.follower_count; %>
         </strong>
         followers
     </a>

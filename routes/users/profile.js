@@ -1,17 +1,15 @@
 const express = require("express");
 const router = express.Router();
 const knex = require("../../db/knex");
+const User = require("../../models/user");
+const Micropost = require("../../models/micropost");
 const Relationship = require("../../models/relationship");
 
-router.get("/", function (req, res, next) {
+router.get("/", async function (req, res, next) {
   const userId = req.user.id;
   const baseUrl = req.baseUrl;
   let targetUserId = userId;
-  let userName = req.user.name;
   let relationship = null;
-  let total = "";
-  let totalFollowing = "";
-  let totalFollowers = "";
 
   console.log(baseUrl);
 
@@ -34,97 +32,19 @@ router.get("/", function (req, res, next) {
     currentPage = parseInt(req.query.page);
   }
 
-  knex("users")
-    .where("id", targetUserId)
-    .then(function (result) {
-      const user = JSON.parse(JSON.stringify(result));
-      userName = user[0].name;
-    })
-    .catch(function (err) {
-      console.error(err);
-      res.render("pages/index", {
-        title: "",
-        errorMessage: [err.sqlMessage],
-        isAuth: req.isAuthenticated(),
-        userId: userId,
-      });
-    });
+  const user = await User.find(targetUserId);
+  const microposts = await Micropost.findAll(targetUserId, currentPage);
 
-  knex("relationships")
-    .where("follower_id", targetUserId)
-    .then(function (result) {
-      totalFollowing = result.length;
-    })
-    .catch(function (err) {
-      console.error(err);
-      res.render("pages/index", {
-        title: "",
-        errorMessage: [err.sqlMessage],
-        isAuth: req.isAuthenticated(),
-        userId: userId,
-      });
-    });
-
-  knex("relationships")
-    .where("followed_id", targetUserId)
-    .then(function (result) {
-      totalFollowers = result.length;
-    })
-    .catch(function (err) {
-      console.error(err);
-      res.render("pages/index", {
-        title: "",
-        errorMessage: [err.sqlMessage],
-        isAuth: req.isAuthenticated(),
-        userId: userId,
-      });
-    });
-
-  knex("microposts")
-    .where("user_id", targetUserId)
-    .then(function (result) {
-      total = result.length;
-    })
-    .catch(function (err) {
-      console.error(err);
-      res.render("pages/index", {
-        title: "",
-        errorMessage: [err.sqlMessage],
-        isAuth: req.isAuthenticated(),
-        userId: userId,
-      });
-    });
-
-  knex("microposts")
-    .where("user_id", targetUserId)
-    .paginate({ perPage: 10, currentPage: currentPage, isLengthAware: true })
-    .then(function (result) {
-      const microposts = JSON.parse(JSON.stringify(result.data));
-      const pagination = result.pagination;
-      res.render("pages/profile", {
-        title: "",
-        message: "",
-        isAuth: req.isAuthenticated(),
-        userId: userId,
-        targetUserId: targetUserId,
-        userName: userName,
-        relationship: relationship,
-        microposts: microposts,
-        total: total,
-        totalFollowing: totalFollowing,
-        totalFollowers: totalFollowers,
-        pagination: pagination,
-      });
-    })
-    .catch(function (err) {
-      console.error(err);
-      res.render("pages/index", {
-        title: "",
-        errorMessage: [err.sqlMessage],
-        isAuth: req.isAuthenticated(),
-        userId: userId,
-      });
-    });
+  res.render("pages/profile", {
+    current_user: req.user,
+    user,
+    title: "",
+    message: "",
+    isAuth: req.isAuthenticated(),
+    relationship: relationship,
+    microposts: microposts,
+    pagination: { currentPage: 0, lastPage: 0 },
+  });
 });
 
 module.exports = router;

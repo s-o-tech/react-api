@@ -1,4 +1,4 @@
-<header class="navbar navbar-expand-md navbar-dark bg-dark">
+<header class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
     <div class="container">
         <a href="/" class="navbar-brand">MicroPost</a>
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navi-items"
@@ -22,7 +22,7 @@
                             Account
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="/users/<%= userId %>"><span class="fas fa-user-cog"></span>
+                            <a class="dropdown-item" href="/users/<%= current_user.id %>"><span class="fas fa-user-cog"></span>
                                 Profile</a>
                             <a class="dropdown-item" href="/edit"><span class="fas fa-cog"></span> Settings</a>
                             <div class="dropdown-divider"></div>

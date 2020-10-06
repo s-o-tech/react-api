@@ -3,47 +3,35 @@
 <head>
     <%- include('../partials/head'); %>
 </head>
-
 <body>
-<header>
-    <%- include('../partials/header'); %>
-</header>
+<%- include('../partials/header'); %>
+<div class="container">
+    <h1>Sign in Page</h1>
 
-<main>
-    <h1 class='text-center'>Sign in Page</h1>
-    <% if(errorMessage.length != 0){ %>
-        <div class="alert alert-danger">
-            <strong>Warning!</strong> The form contains <%= errorMessage.length %> errors.
-        </div>
-        <div>
-            <ul>
-                <% for(let item of errorMessage){ %>
-                    <li><%= item %></li>
-                <% } %>
-            </ul>
-        </div>
-    <% } %>
-    <form action="/signin" method="post" class='form-signin'>
-        <div class="form-group">
-            <label>Email</label>
-            <input type="email" name="email" class="form-control" />
-        </div>
-        <div class="form-group">
-            <label>Password(<a href="/password_resets/new">password forgot?</a>)</label>
-            <input type="password" name="password" class="form-control" />
-        </div>
-        <div class="form-group">
-            <input type="checkbox" name="remember_me" class="form-check-input" />
-            <label>Remember me</label>
+    <%- include('../partials/error_messages'); %>
 
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <form action="/signin" method="post">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label>Password(<a href="/password_resets/new">password forgot?</a>)</label>
+                    <input type="password" name="password" class="form-control" />
+                </div>
+
+                <div class="form-group form-check">
+                    <input type="checkbox" name="remember_me" class="form-check-input" id="rememberMeCheck" />
+                    <label class="form-check-label" for="rememberMeCheck">Remember me on this computer</label>
+                </div>
+
+                <button class="btn btn-primary btn-block" type="submit">Sign up</button>
+            </form>
         </div>
-
-        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
-    </form>
-</main>
-
-<footer>
-    <%- include('../partials/footer'); %>
-</footer>
+    </div>
+</div>
+<%- include('../partials/footer'); %>
 </body>
 </html>
