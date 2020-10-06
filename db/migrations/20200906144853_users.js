@@ -11,6 +11,7 @@ exports.up = function(knex, Promise) {
         t.boolean('isAdmin').defaultTo(false);
         t.string('reset_token').defaultTo(null);
         t.dateTime('reset_limit').defaultTo(null);
+        t.timestamps()
       });
     }else{
       return new Error("The table already exists");
