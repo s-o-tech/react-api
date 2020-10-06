@@ -7,8 +7,7 @@ exports.up = function(knex, Promise) {
         t.increments('id').primary();
         t.integer('follower_id');
         t.integer('followed_id');
-        t.dateTime('created_at').notNullable().defaultTo(knex.fn.now());
-        t.dateTime('updated_at').notNullable().defaultTo(knex.fn.now());
+        t.timestamps()
       });
     }else{
       return new Error("The table already exists");
