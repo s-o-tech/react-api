@@ -17,15 +17,15 @@
         </aside>
 
         <main class="col-md-8">
-            <% if (userId !== targetUserId) { %>
+            <% if (current_user.id !== user.id) { %>
                 <% if (relationship === null) { %>
                     <form action="/relationship" method="post">
-                        <input type="hidden" name="followed_id" value=<%= targetUserId %>>
+                        <input type="hidden" name="followed_id" value=<%= user.id %>>
                         <button class="btn btn-sm btn-primary" type="submit">Follow</button>
                     </form>
                 <% } else { %>
                     <form action="/relationship/delete" method="post">
-                        <input type="hidden" name="followed_id" value=<%= targetUserId %>>
+                        <input type="hidden" name="followed_id" value=<%= user.id %>>
                         <input type="hidden" name="relationship_id" value=<%= relationship.id %>>
                         <button class="btn btn-sm btn-primary" type="submit">UnFollow</button>
                     </form>
@@ -36,7 +36,7 @@
                 <% for(let micropost of microposts){ %>
                     <hr>
                     <%= micropost.content %>
-                    <% if (userId == targetUserId) { %>
+                    <% if (current_user.id === user.id) { %>
                         <form action="/" method="post">
                             <input type="hidden" name="postId" value=<%= micropost.id %>>
                             <button class="btn btn-sm btn-primary" type="submit">delete</button>

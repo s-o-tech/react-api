@@ -1,16 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const knex = require("../db/knex");
+const User = require("../models/user");
 
 /* GET home page. */
-router.get("/", function (req, res, next) {
+router.get("/", async function (req, res, next) {
   if (req.isAuthenticated()) {
     const userId = req.user.id;
-    const userName = req.user.name;
-    let total = "";
     let currentPage;
-    let totalFollowing = "";
-    let totalFollowers = "";
 
     if (req.query.page === undefined) {
       currentPage = 1;
@@ -18,50 +15,7 @@ router.get("/", function (req, res, next) {
       currentPage = parseInt(req.query.page);
     }
 
-    knex("relationships")
-      .where("follower_id", userId)
-      .then(function (result) {
-        totalFollowing = result.length;
-      })
-      .catch(function (err) {
-        console.error(err);
-        res.render("pages/index", {
-          title: "",
-          errorMessage: [err.sqlMessage],
-          isAuth: req.isAuthenticated(),
-          userId: userId,
-        });
-      });
-
-    knex("relationships")
-      .where("followed_id", userId)
-      .then(function (result) {
-        totalFollowers = result.length;
-      })
-      .catch(function (err) {
-        console.error(err);
-        res.render("pages/index", {
-          title: "",
-          errorMessage: [err.sqlMessage],
-          isAuth: req.isAuthenticated(),
-          userId: userId,
-        });
-      });
-
-    knex("microposts")
-      .where("user_id", userId)
-      .then(function (result) {
-        total = result.length;
-      })
-      .catch(function (err) {
-        console.error(err);
-        res.render("pages/index", {
-          title: "",
-          errorMessage: [err.sqlMessage],
-          isAuth: req.isAuthenticated(),
-          userId: userId,
-        });
-      });
+    const user = await User.find(userId);
 
     knex("microposts")
       .where("user_id", userId)
@@ -70,15 +24,12 @@ router.get("/", function (req, res, next) {
         const microposts = JSON.parse(JSON.stringify(result.data));
         const pagination = result.pagination;
         res.render("pages/index", {
+          current_user: req.user,
+          user,
           title: "",
           isAuth: req.isAuthenticated(),
-          userId: userId,
-          userName: userName,
           microposts: microposts,
-          total: total,
           pagination: pagination,
-          totalFollowing: totalFollowing,
-          totalFollowers: totalFollowers,
         });
       })
       .catch(function (err) {

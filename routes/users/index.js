@@ -17,6 +17,7 @@ router.get("/", function (req, res, next) {
         const pagination = result.pagination;
 
         res.render("pages/userlist", {
+          current_user: req.user,
           title: "Userlist",
           message: "",
           isAuth: req.isAuthenticated(),
