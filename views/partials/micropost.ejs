@@ -1,0 +1,18 @@
+<li id="micropost-<%= micropost.id %>">
+    <a class="nav-link" href="/users/<%= micropost.user.id; %>">
+        <img class="gravatar" src="<%= gravatarUrl(micropost.user, 50) %>">
+    </a>
+    <span class="user"><a class="nav-link" href="/users/<%= micropost.user.id; %>"><%= micropost.user.name %></a></span>
+    <span class="content">
+        <%= micropost.content %>
+    </span>
+    <span class="timestamp">
+        Posted <%= micropost.created_at %> ago.
+    </span>
+    <% if (current_user.id === micropost.user.id) { %>
+        <form action="/" method="post">
+            <input type="hidden" name="postId" value=<%= micropost.id %>>
+            <button class="btn btn-sm btn-primary" type="submit">delete</button>
+        </form>
+    <% } %>
+</li>

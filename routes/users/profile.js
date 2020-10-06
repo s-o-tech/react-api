@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const knex = require("../../db/knex");
 const User = require("../../models/user");
+const Micropost = require("../../models/micropost");
 const Relationship = require("../../models/relationship");
 
 router.get("/", async function (req, res, next) {
@@ -32,34 +33,18 @@ router.get("/", async function (req, res, next) {
   }
 
   const user = await User.find(targetUserId);
+  const microposts = await Micropost.findAll(targetUserId, currentPage);
 
-  knex("microposts")
-    .where("user_id", targetUserId)
-    .paginate({ perPage: 10, currentPage: currentPage, isLengthAware: true })
-    .then(function (result) {
-      const microposts = JSON.parse(JSON.stringify(result.data));
-      const pagination = result.pagination;
-      res.render("pages/profile", {
-        current_user: req.user,
-        user,
-        title: "",
-        message: "",
-        isAuth: req.isAuthenticated(),
-        relationship: relationship,
-        microposts: microposts,
-        total: user.post_count,
-        pagination: pagination,
-      });
-    })
-    .catch(function (err) {
-      console.error(err);
-      res.render("pages/index", {
-        title: "",
-        errorMessage: [err.sqlMessage],
-        isAuth: req.isAuthenticated(),
-        userId: userId,
-      });
-    });
+  res.render("pages/profile", {
+    current_user: req.user,
+    user,
+    title: "",
+    message: "",
+    isAuth: req.isAuthenticated(),
+    relationship: relationship,
+    microposts: microposts,
+    pagination: { currentPage: 0, lastPage: 0 },
+  });
 });
 
 module.exports = router;

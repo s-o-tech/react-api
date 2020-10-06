@@ -8,6 +8,8 @@ const sassMiddleware = require("node-sass-middleware");
 
 const app = express();
 
+app.locals = require("./helpers");
+
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");

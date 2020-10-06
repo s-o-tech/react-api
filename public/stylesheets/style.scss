@@ -187,6 +187,15 @@ aside {
   padding: 0;
 }
 
+/* forms */
+
+input, textarea, select, .uneditable-input {
+  border: 1px solid #bbb;
+  width: 100%;
+  margin-bottom: 15px;
+  @include box_sizing;
+}
+
 /* Users index */
 
 .users {
@@ -221,7 +230,7 @@ aside {
     }
   }
   .timestamp {
-    color: $gray-100;
+    color: $gray-600;
     display: block;
     margin-left: 60px;
   }

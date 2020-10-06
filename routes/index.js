@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const knex = require("../db/knex");
 const User = require("../models/user");
+const Micropost = require("../models/micropost");
 
 /* GET home page. */
 router.get("/", async function (req, res, next) {
@@ -15,32 +16,18 @@ router.get("/", async function (req, res, next) {
       currentPage = parseInt(req.query.page);
     }
 
-    const user = await User.find(userId);
+    const user = await User.find(userId, currentPage);
 
-    knex("microposts")
-      .where("user_id", userId)
-      .paginate({ perPage: 10, currentPage: currentPage, isLengthAware: true })
-      .then(function (result) {
-        const microposts = JSON.parse(JSON.stringify(result.data));
-        const pagination = result.pagination;
-        res.render("pages/index", {
-          current_user: req.user,
-          user,
-          title: "",
-          isAuth: req.isAuthenticated(),
-          microposts: microposts,
-          pagination: pagination,
-        });
-      })
-      .catch(function (err) {
-        console.error(err);
-        res.render("pages/index", {
-          title: "",
-          errorMessage: [err.sqlMessage],
-          isAuth: req.isAuthenticated(),
-          userId: userId,
-        });
-      });
+    const microposts = await Micropost.findAll(userId, currentPage);
+    // const pagination = result.pagination;
+    res.render("pages/index", {
+      current_user: req.user,
+      user,
+      title: "",
+      isAuth: req.isAuthenticated(),
+      microposts: microposts,
+      pagination: { currentPage: 0, lastPage: 0 },
+    });
   } else {
     res.render("pages/index", {
       title: "",

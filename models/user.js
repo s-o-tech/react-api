@@ -1,5 +1,5 @@
-const knex = require("../db/knex");
 const bcrypt = require("bcrypt");
+const knex = require("../db/knex");
 const Relationship = require("./relationship");
 const Micropost = require("./micropost");
 

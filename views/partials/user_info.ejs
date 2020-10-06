@@ -1,3 +1,6 @@
+<a class="nav-link" href="/users/<%= user.id; %>">
+    <img class="gravatar" src="<%= gravatarUrl(user, 50) %>">
+</a>
 <h1><%= user.name %></h1>
-<a class="nav-link" href="/users/<%= user.id; %>">view my profile</a>
+<span><a class="nav-link" href="/users/<%= user.id; %>">view my profile</a></span>
 <span><%= user.post_count; %> microposts</span>

@@ -7,18 +7,9 @@
 <%- include('../partials/header'); %>
 <div class="container">
     <h1>Update your profile</h1>
-    <% if(errorMessage.length != 0){ %>
-        <div class="alert alert-danger">
-            <strong>Warning!</strong> The form contains <%= errorMessage.length %> errors.
-        </div>
-        <div>
-            <ul>
-                <% for(let item of errorMessage){ %>
-                    <li><%= item %></li>
-                <% } %>
-            </ul>
-        </div>
-    <% } %>
+
+    <%- include('../partials/error_messages'); %>
+
     <div class="row">
         <div class="col-md-6 offset-md-3">
             <form action="/edit" method="post">
