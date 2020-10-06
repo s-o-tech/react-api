@@ -73,6 +73,7 @@ router.get("/", function (req, res, next) {
         totalFollowing: totalFollowing,
         totalFollowers: totalFollowers,
         followers: followers,
+        total: -1,
       });
     })
     .catch(function (err) {

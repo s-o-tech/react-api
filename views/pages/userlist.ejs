@@ -8,25 +8,19 @@
 <div class="container">
     <h1>All Users</h1>
 
-    <table>
-        <tbody>
+    <ul class="users">
         <% for(let user of users){ %>
-            <tr>
-                <td>
-                    <a class="nav-link" href="/users/<%= user.id %>"><%= user.name %></a>
-                </td>
+            <li>
+                <a class="nav-link" href="/users/<%= user.id %>"><%= user.name %></a>
 
                 <% if(isAdmin){ %>
-                    <td>
-                        <a href="" class="delete-confirm" data-toggle="modal" data-target="#deleteModal"
-                           data-whatever="<%= user.id %>">delete</a>
-                    </td>
+                    <a href="" class="delete-confirm" data-toggle="modal" data-target="#deleteModal"
+                       data-whatever="<%= user.id %>">delete</a>
                 <% } %>
-            </tr>
+            </li>
 
         <% } %>
-        </tbody>
-    </table>
+    </ul>
 
     <!-- Modal -->
     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
