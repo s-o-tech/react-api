@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(flash());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-require("./config/session")(app);
+// Authorization
 require("./config/passport")(app);
 
 // router

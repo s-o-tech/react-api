@@ -72,9 +72,8 @@ router.post(
   }
 );
 
-router.use("/profile", require("./profile"));
-router.use("/:userid", require("./profile"));
-router.use("/:userid/following", require("./following"));
-router.use("/:userid/followers", require("./followers"));
+router.get("/:userid", require("./profile"));
+router.get("/:userid/following", require("./following"));
+router.get("/:userid/followers", require("./followers"));
 
 module.exports = router;

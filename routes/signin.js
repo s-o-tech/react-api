@@ -19,8 +19,6 @@ router.post(
   function (req, res, next) {
     if (req.body.remember_me) {
       req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000;
-    } else {
-      req.session.cookie.expires = false;
     }
     res.redirect("/");
   }
