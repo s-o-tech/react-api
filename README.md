@@ -1,15 +1,14 @@
 # micropost
 
+A Node.js Implementation Inspired by a Rails Tutorial
+
 ## Prepare
 
-* Migrate database
+### Database
 
 ```
+#  Migrate database
 $ npx knex migrate:latest
-```
-
-* Seed
-
-```
+# Seed
 $ npx knex seed:run
 ```

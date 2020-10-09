@@ -13,14 +13,15 @@ function create(followerId, followedId) {
     });
 }
 
-function find(followerId, followedId) {
-  return knex(TABLE_NAME)
+async function find(followerId, followedId) {
+  return await knex(TABLE_NAME)
     .where({ follower_id: followerId, followed_id: followedId })
     .then((results) => {
       if (results.length === 0) {
-        throw new Error("Relationship not found");
+        return null;
+      } else {
+        return results[0];
       }
-      return results[0];
     });
 }
 
