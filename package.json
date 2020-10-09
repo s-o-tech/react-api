@@ -3,24 +3,24 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node ./bin/www",
+    "db:migrate": "knex migrate:latest",
+    "db:seed": "knex seed:run"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.2",
     "connect-flash": "^0.1.1",
-    "cookie-parser": "~1.4.4",
+    "cookie-session": "^1.4.0",
     "debug": "~2.6.9",
     "ejs": "~2.6.1",
     "express": "~4.16.1",
     "express-flash": "0.0.2",
-    "express-session": "^1.17.1",
     "express-validator": "^6.6.1",
     "http-errors": "~1.6.3",
     "knex": "^0.21.5",
     "knex-paginate": "^1.2.3",
-    "knex-paginator": "^2.0.0",
     "morgan": "~1.9.1",
     "mysql": "^2.18.1",
     "node-sass-middleware": "0.11.0",

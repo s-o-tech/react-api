@@ -6,33 +6,37 @@ const Micropost = require("../models/micropost");
 
 /* GET home page. */
 router.get("/", async function (req, res, next) {
-  if (req.isAuthenticated()) {
-    const userId = req.user.id;
-    let currentPage;
+  try {
+    if (req.isAuthenticated()) {
+      const userId = req.user.id;
+      let currentPage;
 
-    if (req.query.page === undefined) {
-      currentPage = 1;
+      if (req.query.page === undefined) {
+        currentPage = 1;
+      } else {
+        currentPage = parseInt(req.query.page);
+      }
+
+      const user = await User.find(userId, currentPage);
+
+      const microposts = await Micropost.findAll(userId, currentPage);
+      // const pagination = result.pagination;
+      res.render("pages/index", {
+        current_user: req.user,
+        user,
+        title: "",
+        isAuth: req.isAuthenticated(),
+        microposts: microposts,
+        pagination: { currentPage: 0, lastPage: 0 },
+      });
     } else {
-      currentPage = parseInt(req.query.page);
+      res.render("pages/index", {
+        title: "",
+        isAuth: req.isAuthenticated(),
+      });
     }
-
-    const user = await User.find(userId, currentPage);
-
-    const microposts = await Micropost.findAll(userId, currentPage);
-    // const pagination = result.pagination;
-    res.render("pages/index", {
-      current_user: req.user,
-      user,
-      title: "",
-      isAuth: req.isAuthenticated(),
-      microposts: microposts,
-      pagination: { currentPage: 0, lastPage: 0 },
-    });
-  } else {
-    res.render("pages/index", {
-      title: "",
-      isAuth: req.isAuthenticated(),
-    });
+  } catch (error) {
+    next(error);
   }
 });
 
@@ -83,5 +87,6 @@ router.use("/password_resets", require("./password_resets"));
 router.use("/edit", require("./edit"));
 router.use("/users", require("./users"));
 router.use("/relationship", require("./relationship"));
+router.use("/account_activations", require("./activations"));
 
 module.exports = router;

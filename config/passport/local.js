@@ -13,7 +13,7 @@ module.exports = new LocalStrategy(
       })
       .catch(function (err) {
         console.error(err);
-        return done(null, false, { message: "Error" });
+        return done(null, false, { message: `${err}` });
       });
   }
 );

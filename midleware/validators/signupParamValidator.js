@@ -7,6 +7,6 @@ module.exports = [
     .isEmpty()
     .withMessage("必須項目です。")
     .isEmail()
-    .normalizeEmail(),
+    .normalizeEmail({ gmail_remove_dots: false }),
   require("./checkPasswordConfirmation"),
 ];

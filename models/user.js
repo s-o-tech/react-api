@@ -50,6 +50,10 @@ function verify(email, password) {
       return bcrypt.compare(password, user.password).then((result) => {
         if (!result) {
           throw new Error("Invalid password");
+        } else if (!user.isActivated) {
+          throw new Error(
+            "Account not activated. Check your email for the activation link."
+          );
         }
         return user;
       });
@@ -77,16 +81,18 @@ async function find(userId) {
   };
 }
 
-function following(userId) {
-  return knex("relationships")
+async function following(userId) {
+  return await knex("relationships")
     .join(TABLE_NAME, "relationships.followed_id", "=", "users.id")
-    .where({ follower_id: userId });
+    .where({ follower_id: userId })
+    .then((result) => result);
 }
 
-function followers(userId) {
-  return knex("relationships")
+async function followers(userId) {
+  return await knex("relationships")
     .join(TABLE_NAME, "relationships.follower_id", "=", "users.id")
-    .where({ followed_id: userId });
+    .where({ followed_id: userId })
+    .then((result) => result);
 }
 
 module.exports = {

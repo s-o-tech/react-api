@@ -4,23 +4,13 @@ const knex = require("../db/knex");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
-// const smtpConfig = nodemailer.createTransport({
-//   host: "SMTP SERVER",
-//   port: 25,
-//   secure: false,
-//   requireTLS: false,
-//   auth: {
-//     user: "user@example.com",
-//     pass: "password",
-//   },
-// });
-const smtpGmail = nodemailer.createTransport({
-  service: "gmail",
-  port: 46,
-  secure: true,
+const smtpConfig = nodemailer.createTransport({
+  host: "smtp.sendgrid.net",
+  port: 587,
+  requiresAuth: true,
   auth: {
-    user: "testmailsend102@gmail.com",
-    pass: "mailsendtest102",
+    user: "d.higashi+school@atomitech.jp",
+    pass: "Dj!*m*5%asG3F^Ec",
   },
 });
 
@@ -63,18 +53,15 @@ router.post(
   function (req, res) {
     const email = req.body.email;
     const token = crypto.randomBytes(16).toString("hex");
-    const url =
-      "localhost:3000/password_resets/" +
-      token +
-      "/edit?email=" +
-      encodeURIComponent(email);
+    const url = `localhost:3000/password_resets/${token}/edit?email=${encodeURIComponent(
+      email
+    )}`;
 
     const mailOptions = {
-      from: "sendmailtest102@gmail.com",
+      from: "d.higashi+school@atomitech.jp",
       to: email,
       subject: "Password reset",
-      html:
-        `
+      html: `
     <html>
     <head>
       <meta http-equiv="Content-Type" Content="text/html;charset=UTF-8">
@@ -83,13 +70,7 @@ router.post(
       <h1>Password reset</h1>
       <p>To reset your password click the link below:</p>
       <p>This link will expire in two hours.</p>
-    ` +
-        "<a href = '" +
-        url +
-        "'>" +
-        url +
-        "</a>" +
-        `
+      <a href = '${url}'>${url}</a>
       <p>
       If you did not request your password to be reset, please ignore this email and
       your password will stay as it is.
@@ -106,7 +87,7 @@ router.post(
         reset_limit: knex.fn.now(),
       })
       .then(function (result) {
-        smtpGmail.sendMail(mailOptions, function (err) {
+        smtpConfig.sendMail(mailOptions, function (err) {
           if (err) {
             console.error(err);
             res.render("pages/password_resets", {

@@ -11,6 +11,9 @@ exports.up = function(knex, Promise) {
         t.boolean('isAdmin').defaultTo(false);
         t.string('reset_token').defaultTo(null);
         t.dateTime('reset_limit').defaultTo(null);
+        t.string('activation_token').defaultTo(null);
+        t.boolean('isActivated').defaultTo(false);
+        t.dateTime('activated_at').defaultTo(null);
         t.timestamps()
       });
     }else{
