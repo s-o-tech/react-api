@@ -82,7 +82,7 @@ router.post(
         <meta http-equiv="Content-Type" Content="text/html;charset=UTF-8">
       </head>
       <body>
-        <h1>Sample App</h1>
+        <h1>MicroPost</h1>
         <p>Hi ${username},</p>
         <p>Welcome to the Sample App! Click on the link below to activate your account:</p>
         <a href = '${url}'>${url}</a>

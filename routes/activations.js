@@ -24,7 +24,15 @@ router.get(
             });
           }
         }
-      });
+      })
+      .catch(function(err){
+        console.error(err);
+        res.render("pages/activations", {
+          title: "Account activation",
+          errorMessage: ["Token error. Please issue the token again."],
+          isAuth: req.isAuthenticated(),
+        });
+      })
   },
   function (req, res) {
     const email = decodeURI(req.query.email);
