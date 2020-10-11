@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const knex = require("../db/knex");
-const bcrypt = require("bcrypt");
+const User = require("../models/user");
 
 router.get(
   "/:token/edit",
@@ -9,41 +8,23 @@ router.get(
     const email = decodeURI(req.query.email);
     const token = req.params.token;
 
-    knex("users")
-      .where({ email: email })
-      .then(function (result) {
-        result = JSON.parse(JSON.stringify(result))[0];
-        if (result !== undefined) {
-          if (bcrypt.compareSync(token, result.activation_token)) {
-            next();
-          } else {
-            res.render("pages/activations", {
-              title: "Account activation",
-              errorMessage: ["Token error. Please issue the token again."],
-              isAuth: req.isAuthenticated(),
-            });
-          }
-        }
+    User.activationTokenVerify(email, token)
+      .then(() => {
+        next();
       })
-      .catch(function(err){
+      .catch(function (err) {
         console.error(err);
         res.render("pages/activations", {
           title: "Account activation",
-          errorMessage: ["Token error. Please issue the token again."],
+          errorMessage: [err],
           isAuth: req.isAuthenticated(),
         });
-      })
+      });
   },
   function (req, res) {
     const email = decodeURI(req.query.email);
-    knex("users")
-      .where({ email: email })
-      .update({
-        activation_token: null,
-        isActivated: true,
-        activated_at: knex.fn.now(),
-      })
-      .then(function (result) {
+    User.activateUser(email)
+      .then(() => {
         res.render("pages/index", {
           title: "MicroPost",
           message: "Account activated",

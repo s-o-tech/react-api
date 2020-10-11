@@ -4,20 +4,7 @@ const { validationResult } = require("express-validator");
 const User = require("../models/user");
 const SignupParamValidator = require("../midleware/validators/signupParamValidator");
 
-const crypto = require("crypto");
-const bcrypt = require("bcrypt");
-const nodemailer = require("nodemailer");
-const knex = require("../db/knex");
-
-const smtpConfig = nodemailer.createTransport({
-  host: "smtp.sendgrid.net",
-  port: 587,
-  requiresAuth: true,
-  auth: {
-    user: "d.higashi+school@atomitech.jp",
-    pass: "Dj!*m*5%asG3F^Ec",
-  },
-});
+const Mail = require("../helpers/send_mail");
 
 router.get("/", function (req, res, next) {
   res.render("pages/signup", {
@@ -65,54 +52,31 @@ router.post(
       });
   },
   function (req, res) {
-    const token = crypto.randomBytes(16).toString("hex");
     const username = req.body.username;
     const email = req.body.email;
-    const url = `localhost:3000/account_activations/${token}/edit?email=${encodeURIComponent(
-      email
-    )}`;
 
-    const mailOptions = {
-      from: "d.higashi+school@atomitech.jp",
-      to: email,
-      subject: "Account activations",
-      html: `
-      <html>
-      <head>
-        <meta http-equiv="Content-Type" Content="text/html;charset=UTF-8">
-      </head>
-      <body>
-        <h1>MicroPost</h1>
-        <p>Hi ${username},</p>
-        <p>Welcome to the Sample App! Click on the link below to activate your account:</p>
-        <a href = '${url}'>${url}</a>
-      <body>
-      </html>
-      `,
-    };
+    User.generateActivationToken(email)
+      .then((token) => {
+        const url = `localhost:3000/account_activations/${token}/edit?email=${encodeURIComponent(
+          email
+        )}`;
+        const mailOptions = Mail.activationConfig(username, url, email);
 
-    knex("users")
-      .where({ email: email })
-      .update({
-        activation_token: bcrypt.hashSync(token, 10),
-      })
-      .then(function (result) {
-        smtpConfig.sendMail(mailOptions, function (err) {
-          if (err) {
-            console.error(err);
-            res.render("pages/signup", {
-              title: "SignUp",
-              errorMessage: ["sendMail Error"],
-              isAuth: req.isAuthenticated(),
-            });
-          } else {
+        Mail.send(mailOptions)
+          .then(() => {
             res.render("pages/index", {
               title: "MicroPost",
               message: "Email sent with activations instructions",
               isAuth: req.isAuthenticated(),
             });
-          }
-        });
+          })
+          .catch((err) => {
+            res.render("pages/signup", {
+              title: "SignUp",
+              errorMessage: [err],
+              isAuth: req.isAuthenticated(),
+            });
+          });
       })
       .catch(function (err) {
         console.error(err);
