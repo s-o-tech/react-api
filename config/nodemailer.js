@@ -5,8 +5,8 @@ const transport = nodemailer.createTransport({
   port: 587,
   requiresAuth: true,
   auth: {
-    user: "d.higashi+school@atomitech.jp",
-    pass: "Dj!*m*5%asG3F^Ec",
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
