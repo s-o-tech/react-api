@@ -3,7 +3,7 @@ const router = express.Router();
 const Mail = require("../../helpers/send_mail");
 const User = require("../../models/user");
 
-router.get("/new", function (req, res, next) {
+router.get("/", function (req, res, next) {
   res.render("pages/accounts/password_reset", {
     title: "Forgot Password",
     errorMessage: [],
@@ -11,61 +11,47 @@ router.get("/new", function (req, res, next) {
   });
 });
 
-router.post(
-  "/",
-  function (req, res, next) {
-    const email = req.body.email;
+router.post("/", async function (req, res, next) {
+  const email = req.body.email;
 
-    User.exist(email)
-      .then(() => {
-        next();
-      })
-      .catch(function (err) {
-        console.error(err);
-        res.render("pages/accounts/password_reset", {
-          title: "Forgot Password",
-          errorMessage: [err],
-          isAuth: req.isAuthenticated(),
-        });
-      });
-  },
-  function (req, res) {
-    const email = req.body.email;
+  const ieExist = await User.exist({ email });
+  if (!ieExist) {
+    res.render("pages/accounts/password_reset", {
+      title: "Forgot Password",
+      errorMessage: ["Invalid email address"],
+      isAuth: req.isAuthenticated(),
+    });
 
-    User.generateResetToken(email)
-      .then((token) => {
-        const url = `localhost:3000/password_resets/${token}/edit?email=${encodeURIComponent(
-          email
-        )}`;
-        const mailOptions = Mail.passwordResetConfig(url, email);
-
-        Mail.send(mailOptions)
-          .then(() => {
-            res.render("pages/index", {
-              title: "MicroPost",
-              message: "Email sent with password reset instructions",
-              isAuth: req.isAuthenticated(),
-            });
-          })
-          .catch((err) => {
-            res.render("pages/accounts/password_reset", {
-              title: "Forgot Password",
-              errorMessage: [err],
-              isAuth: req.isAuthenticated(),
-            });
-          });
-      })
-      .catch(function (err) {
-        console.error(err);
-        res.render("pages/accounts/password_reset_edit", {
-          title: "Forgot Password",
-          errorMessage: ["DB error"],
-          isAuth: req.isAuthenticated(),
-          email: email,
-        });
-      });
+    return;
   }
-);
+
+  try {
+    const token = await User.generateResetToken(email);
+    const url = `localhost:3000/accounts/password_reset/${token}/edit?email=${encodeURIComponent(
+      email
+    )}`;
+
+    const html = await Mail.buildHtml("password_reset", { url });
+    const mailParam = {
+      to: email,
+      subject: "Password reset",
+      html,
+    };
+    await Mail.send(mailParam);
+
+    res.render("pages/index", {
+      title: "MicroPost",
+      message: "Email sent with password reset instructions",
+      isAuth: req.isAuthenticated(),
+    });
+  } catch (err) {
+    res.render("pages/accounts/password_reset", {
+      title: "Forgot Password",
+      errorMessage: [err],
+      isAuth: req.isAuthenticated(),
+    });
+  }
+});
 
 router.get("/:token/edit", function (req, res) {
   const email = decodeURI(req.query.email);

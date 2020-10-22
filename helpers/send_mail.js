@@ -1,73 +1,31 @@
-const nodemailer = require("nodemailer");
+const path = require("path");
+const ejs = require("ejs");
+const transport = require("../config/nodemailer");
 
-const smtpConfig = nodemailer.createTransport({
-  host: "smtp.sendgrid.net",
-  port: 587,
-  requiresAuth: true,
-  auth: {
-    user: "d.higashi+school@atomitech.jp",
-    pass: "Dj!*m*5%asG3F^Ec",
-  },
-});
-
-function activationConfig(username, url, email) {
-  return {
-    from: "d.higashi+school@atomitech.jp",
-    to: email,
-    subject: "Account activation",
-    html: `
-        <html>
-            <head>
-                <meta http-equiv="Content-Type" Content="text/html;charset=UTF-8">
-            </head>
-            <body>
-                <h1>MicroPost</h1>
-                <p>Hi ${username},</p>
-                <p>Welcome to the Sample App! Click on the link below to activate your account:</p>
-                <a href = '${url}'>${url}</a>
-            <body>
-        </html>
-        `,
-  };
+async function buildHtml(template, data) {
+  return ejs.renderFile(
+    path.join(__dirname, "../views/email/", template + ".ejs"),
+    data
+  );
 }
 
-function passwordResetConfig(url, email) {
-  return {
+async function send(param) {
+  const data = {
     from: "d.higashi+school@atomitech.jp",
-    to: email,
-    subject: "Password reset",
-    html: `
-        <html>
-            <head>
-                <meta http-equiv="Content-Type" Content="text/html;charset=UTF-8">
-            </head>
-            <body>
-                <h1>Password reset</h1>
-                <p>To reset your password click the link below:</p>
-                <p>This link will expire in two hours.</p>
-                <a href = '${url}'>${url}</a>
-                <p>
-                If you did not request your password to be reset, please ignore this email and
-                your password will stay as it is.
-                </p>
-            <body>
-        </html>
-        `,
+    ...param,
   };
-}
 
-async function send(mailOptions) {
-  return smtpConfig.sendMail(mailOptions, function (err) {
+  console.log(data);
+
+  return transport.sendMail(data, function (err) {
     if (err) {
       console.error(err);
-      throw new Error("sendMail Error");
+      throw err;
     }
   });
 }
 
 module.exports = {
-  smtpConfig,
-  passwordResetConfig,
-  activationConfig,
+  buildHtml,
   send,
 };

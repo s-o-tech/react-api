@@ -6,15 +6,13 @@ const Micropost = require("./micropost");
 
 const TABLE_NAME = "users";
 
-function createUser(username, email, password) {
-  return bcrypt
-    .hash(password, 10)
-    .then((hashedPassword) => {
-      return knex(TABLE_NAME).insert({
-        name: username,
-        email: email,
-        password: hashedPassword,
-      });
+async function createUser(username, email, password) {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  return await knex(TABLE_NAME)
+    .insert({
+      name: username,
+      email: email,
+      password: hashedPassword,
     })
     .then((result) => {
       return result;
@@ -180,13 +178,11 @@ async function activationTokenVerify(email, token) {
     });
 }
 
-async function exist(email) {
+async function exist(condition) {
   return await knex(TABLE_NAME)
-    .where({ email: email })
+    .where(condition)
     .then((results) => {
-      if (results.length === 0) {
-        throw new Error("User not found");
-      }
+      return results.length !== 0;
     });
 }
 
