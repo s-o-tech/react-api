@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const Mail = require("../helpers/send_mail");
-const User = require("../models/user");
+const Mail = require("../../helpers/send_mail");
+const User = require("../../models/user");
 
 router.get("/new", function (req, res, next) {
-  res.render("pages/password_resets", {
+  res.render("pages/accounts/password_reset", {
     title: "Forgot Password",
     errorMessage: [],
     isAuth: req.isAuthenticated(),
@@ -22,7 +22,7 @@ router.post(
       })
       .catch(function (err) {
         console.error(err);
-        res.render("pages/password_resets", {
+        res.render("pages/accounts/password_reset", {
           title: "Forgot Password",
           errorMessage: [err],
           isAuth: req.isAuthenticated(),
@@ -48,7 +48,7 @@ router.post(
             });
           })
           .catch((err) => {
-            res.render("pages/password_resets", {
+            res.render("pages/accounts/password_reset", {
               title: "Forgot Password",
               errorMessage: [err],
               isAuth: req.isAuthenticated(),
@@ -57,7 +57,7 @@ router.post(
       })
       .catch(function (err) {
         console.error(err);
-        res.render("pages/password_resets_edit", {
+        res.render("pages/accounts/password_reset_edit", {
           title: "Forgot Password",
           errorMessage: ["DB error"],
           isAuth: req.isAuthenticated(),
@@ -69,7 +69,7 @@ router.post(
 
 router.get("/:token/edit", function (req, res) {
   const email = decodeURI(req.query.email);
-  res.render("pages/password_resets_edit", {
+  res.render("pages/accounts/password_reset_edit", {
     title: "Forgot Password",
     errorMessage: [],
     isAuth: req.isAuthenticated(),
@@ -86,7 +86,7 @@ router.post(
     const passwordConfirm = req.body.confirmation;
 
     if (password !== passwordConfirm) {
-      res.render("pages/password_resets_edit", {
+      res.render("pages/accounts/password_reset_edit", {
         title: "Forgot Password",
         errorMessage: ["Password doesn't match"],
         isAuth: req.isAuthenticated(),
@@ -99,7 +99,7 @@ router.post(
         })
         .catch(function (err) {
           console.error(err);
-          res.render("pages/password_resets_edit", {
+          res.render("pages/accounts/password_reset_edit", {
             title: "Forgot Password",
             errorMessage: [err],
             isAuth: req.isAuthenticated(),
@@ -125,7 +125,7 @@ router.post(
       })
       .catch(function (err) {
         console.error(err);
-        res.render("pages/password_resets_edit", {
+        res.render("pages/accounts/password_reset_edit", {
           title: "Forgot Password",
           errorMessage: ["DB error. Please issue the token again."],
           isAuth: req.isAuthenticated(),

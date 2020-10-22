@@ -14,7 +14,7 @@ function activationConfig(username, url, email) {
   return {
     from: "d.higashi+school@atomitech.jp",
     to: email,
-    subject: "Account activations",
+    subject: "Account activation",
     html: `
         <html>
             <head>

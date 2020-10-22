@@ -80,13 +80,8 @@ router.post("/", function (req, res, next) {
   }
 });
 
-router.use("/signup", require("./signup"));
-router.use("/signin", require("./signin"));
-router.use("/logout", require("./logout"));
-router.use("/password_resets", require("./password_resets"));
-router.use("/edit", require("./edit"));
+router.use("/accounts", require("./accounts"));
 router.use("/users", require("./users"));
 router.use("/relationship", require("./relationship"));
-router.use("/account_activations", require("./activations"));
 
 module.exports = router;

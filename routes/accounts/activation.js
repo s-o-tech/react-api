@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const User = require("../models/user");
+const User = require("../../models/user");
 
 router.get(
   "/:token/edit",
@@ -14,7 +14,7 @@ router.get(
       })
       .catch(function (err) {
         console.error(err);
-        res.render("pages/activations", {
+        res.render("pages/accounts/activation", {
           title: "Account activation",
           errorMessage: [err],
           isAuth: req.isAuthenticated(),
@@ -33,7 +33,7 @@ router.get(
       })
       .catch(function (err) {
         console.error(err);
-        res.render("pages/activations", {
+        res.render("pages/accounts/activation", {
           title: "Account activation",
           errorMessage: ["DB Error"],
           isAuth: req.isAuthenticated(),

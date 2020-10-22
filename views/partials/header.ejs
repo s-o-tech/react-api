@@ -10,7 +10,7 @@
             <ul class="nav navbar-nav ml-auto">
                 <% if(!isAuth){ %>
                     <li class="nav-item">
-                        <a class="nav-link" href="/signin"><span class="fas fa-sign-in-alt"></span> Sign In</a>
+                        <a class="nav-link" href="/accounts/signin"><span class="fas fa-sign-in-alt"></span> Sign In</a>
                     </li>
                 <% }else{ %>
                     <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
@@ -24,9 +24,9 @@
                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <a class="dropdown-item" href="/users/<%= current_user.id %>"><span class="fas fa-user-cog"></span>
                                 Profile</a>
-                            <a class="dropdown-item" href="/edit"><span class="fas fa-cog"></span> Settings</a>
+                            <a class="dropdown-item" href="/accounts/edit"><span class="fas fa-cog"></span> Settings</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="/logout"><span class="fas fa-sign-out-alt"></span> Log
+                            <a class="dropdown-item" href="/accounts/logout"><span class="fas fa-sign-out-alt"></span> Log
                                 Out</a>
                         </div>
                     </li>

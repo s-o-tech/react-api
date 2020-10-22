@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator");
 
-const User = require("../models/user");
-const EditParamValidator = require("../midleware/validators/editParamValidator");
+const User = require("../../models/user");
+const EditParamValidator = require("../../midleware/validators/editParamValidator");
 
 router.get("/", function (req, res, next) {
-  res.render("pages/edit", {
+  res.render("pages/accounts/edit", {
     current_user: req.user,
     title: "Edit User",
     errorMessage: [],
@@ -22,7 +22,7 @@ router.post("/", EditParamValidator, function (req, res, next) {
   };
   const result = validationResult(req).formatWith(errorFormatter);
   if (!result.isEmpty()) {
-    res.render("pages/edit", {
+    res.render("pages/accounts/edit", {
       title: "Edit User",
       errorMessage: result.array(),
       isAuth: req.isAuthenticated(),
@@ -52,7 +52,7 @@ router.post("/", EditParamValidator, function (req, res, next) {
       console.error(err);
       // usernameが重複している場合
       if (/users.users_name_unique/.test(err.sqlMessage)) {
-        res.render("pages/edit", {
+        res.render("pages/accounts/edit", {
           title: "Edit User",
           errorMessage: [`This username(${username}) is already used`],
           isAuth: req.isAuthenticated(),
@@ -60,7 +60,7 @@ router.post("/", EditParamValidator, function (req, res, next) {
       }
       // emailが重複している場合
       else if (/users.users_email_unique/.test(err.sqlMessage)) {
-        res.render("pages/dit", {
+        res.render("pages/accounts/dit", {
           title: "Edit User",
           errorMessage: [`This email(${email}) is already used`],
           isAuth: req.isAuthenticated(),
@@ -69,7 +69,7 @@ router.post("/", EditParamValidator, function (req, res, next) {
       // その他のエラーはSQLから出力された文をそのまま表示させます
       // ここの仕様は応相談
       else {
-        res.render("pages/edit", {
+        res.render("pages/accounts/edit", {
           title: "Edit User",
           errorMessage: [err.sqlMessage],
           isAuth: req.isAuthenticated(),
