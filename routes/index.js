@@ -17,7 +17,7 @@ router.get("/", async function (req, res, next) {
         currentPage = parseInt(req.query.page);
       }
 
-      const user = await User.find(userId, currentPage);
+      const user = await User.findById(userId, currentPage);
 
       const microposts = await Micropost.findAll(userId, currentPage);
       // const pagination = result.pagination;

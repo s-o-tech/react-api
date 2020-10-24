@@ -8,15 +8,23 @@ const TABLE_NAME = "users";
 
 async function createUser(username, email, password) {
   const hashedPassword = await bcrypt.hash(password, 10);
-  return await knex(TABLE_NAME)
+
+  // Activation token
+  const token = crypto.randomBytes(16).toString("hex");
+  const hashedToken = await bcrypt.hash(token, 10);
+
+  await knex(TABLE_NAME)
     .insert({
       name: username,
       email: email,
       password: hashedPassword,
+      activation_token: hashedToken,
     })
     .then((result) => {
       return result;
     });
+
+  return hashedToken;
 }
 
 function update(id, data) {
@@ -75,10 +83,9 @@ function verify(email, password) {
     });
 }
 
-async function find(userId) {
+async function findById(userId) {
   const user = await knex(TABLE_NAME)
     .where({ id: userId })
-    .select("*")
     .then((results) => {
       if (results.length === 0) {
         throw new Error("User not found");
@@ -96,6 +103,17 @@ async function find(userId) {
   };
 }
 
+async function where(condition) {
+  return await knex(TABLE_NAME)
+    .where(condition)
+    .then((results) => {
+      if (results.length === 0) {
+        return null;
+      }
+      return results[0];
+    });
+}
+
 async function following(userId) {
   return await knex("relationships")
     .join(TABLE_NAME, "relationships.followed_id", "=", "users.id")
@@ -110,40 +128,19 @@ async function followers(userId) {
     .then((result) => result);
 }
 
-async function generateResetToken(email) {
+async function generateResetToken(userId) {
   const token = crypto.randomBytes(16).toString("hex");
+  const hashedToken = bcrypt.hash(token, 10);
+
   return await knex(TABLE_NAME)
-    .where({ email: email })
+    .where({ id: userId })
     .update({
-      reset_token: bcrypt.hashSync(token, 10),
+      reset_token: hashedToken,
       reset_limit: knex.fn.now(),
     })
     .then(() => {
       return token;
     });
-}
-
-async function generateActivationToken(email) {
-  const token = crypto.randomBytes(16).toString("hex");
-  return await knex(TABLE_NAME)
-    .where({ email: email })
-    .update({
-      activation_token: bcrypt.hashSync(token, 10),
-    })
-    .then(() => {
-      return token;
-    });
-}
-
-async function activateUser(email) {
-  return await knex(TABLE_NAME)
-    .where({ email: email })
-    .update({
-      activation_token: null,
-      isActivated: true,
-      activated_at: knex.fn.now(),
-    })
-    .then((result) => result);
 }
 
 async function isExpired(email, token) {
@@ -163,41 +160,31 @@ async function isExpired(email, token) {
     });
 }
 
-async function activationTokenVerify(email, token) {
-  return await knex(TABLE_NAME)
-    .where({ email: email })
-    .select("*")
-    .then((results) => {
-      if (results.length === 0) {
-        throw new Error("User not found");
-      }
-      const user = results[0];
-      if (!bcrypt.compareSync(token, user.activation_token)) {
-        throw new Error("Token error. Please issue the token again.");
-      }
-    });
-}
+async function activate(user, token) {
+  if (!(await bcrypt.compare(token, user.activation_token))) {
+    throw new Error("Token error. Please issue the token again.");
+  }
 
-async function exist(condition) {
   return await knex(TABLE_NAME)
-    .where(condition)
-    .then((results) => {
-      return results.length !== 0;
-    });
+    .where({ id: user.id })
+    .update({
+      activation_token: null,
+      isActivated: true,
+      activated_at: knex.fn.now(),
+    })
+    .then((result) => result);
 }
 
 module.exports = {
   createUser,
   update,
   verify,
-  find,
+  findById,
+  where,
   following,
   followers,
   generateResetToken,
-  generateActivationToken,
-  activateUser,
+  activate,
   updateByEmail,
   isExpired,
-  exist,
-  activationTokenVerify,
 };

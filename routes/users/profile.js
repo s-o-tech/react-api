@@ -12,7 +12,7 @@ const handler = async function (req, res, next) {
     currentPage = parseInt(req.query.page);
   }
 
-  const user = await User.find(userId);
+  const user = await User.findById(userId);
   const microposts = await Micropost.findAll(userId, currentPage);
 
   let relationship = null;
