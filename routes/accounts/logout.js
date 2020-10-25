@@ -6,7 +6,7 @@ router.get("/", function (req, res, next) {
     req.logout();
     res.redirect("/");
   } else {
-    res.redirect("signin");
+    res.redirect("/accounts/signin");
   }
 });
 
