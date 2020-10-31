@@ -8,12 +8,7 @@ const wrap = require("../../helpers/async_wrapper");
 const Mail = require("../../helpers/send_mail");
 
 router.get("/", function (req, res, next) {
-  res.render("pages/accounts/signup", {
-    current_user: req.user,
-    title: "Sign Up",
-    errorMessage: [],
-    isAuth: req.isAuthenticated(),
-  });
+  res.render("pages/accounts/signup");
 });
 
 router.post(
@@ -22,18 +17,12 @@ router.post(
   wrap(async function (req, res, next) {
     const result = validationResult(req);
     if (!result.isEmpty()) {
-      res.render("pages/accounts/signup", {
-        current_user: req.user,
-        title: "Sign up",
+      return res.render("pages/accounts/signup", {
         errorMessage: result.array(),
-        isAuth: req.isAuthenticated(),
       });
-      return;
     }
 
-    const username = req.body.username;
-    const email = req.body.email;
-    const password = req.body.password;
+    const { username, email, password } = req.body;
 
     let activationToken;
     try {
@@ -41,12 +30,9 @@ router.post(
     } catch (err) {
       console.error(err);
       res.render("pages/accounts/signup", {
-        current_user: req.user,
-        title: "Sign up",
         errorMessage: [
           `This username(${username}) or email(${email}) is already used`,
         ],
-        isAuth: req.isAuthenticated(),
       });
       return;
     }
@@ -64,10 +50,8 @@ router.post(
     await Mail.send(mailParam);
 
     res.render("pages/index", {
-      current_user: req.user,
       title: "MicroPost",
       message: "Email sent with activation instructions",
-      isAuth: req.isAuthenticated(),
     });
   })
 );
