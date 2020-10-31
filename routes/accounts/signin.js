@@ -4,6 +4,7 @@ const passport = require("passport");
 
 router.get("/", function (req, res, next) {
   res.render("pages/accounts/signin", {
+    current_user: req.user,
     title: "Sign in",
     isAuth: req.isAuthenticated(),
     errorMessage: req.flash("error"),

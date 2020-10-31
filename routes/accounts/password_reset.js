@@ -8,6 +8,7 @@ const User = require("../../models/user");
 
 router.get("/", function (req, res, next) {
   res.render("pages/accounts/password_reset", {
+    current_user: req.user,
     title: "Forgot Password",
     errorMessage: [],
     isAuth: req.isAuthenticated(),
@@ -22,6 +23,7 @@ router.post(
     const user = await User.where({ email });
     if (!user) {
       res.render("pages/accounts/password_reset", {
+        current_user: req.user,
         title: "Forgot Password",
         errorMessage: ["Invalid email address"],
         isAuth: req.isAuthenticated(),
@@ -44,6 +46,7 @@ router.post(
     await Mail.send(mailParam);
 
     res.render("pages/index", {
+      current_user: req.user,
       title: "MicroPost",
       message: "Email sent with password reset instructions",
       isAuth: req.isAuthenticated(),
@@ -54,6 +57,7 @@ router.post(
 router.get("/:token/edit", function (req, res) {
   const email = decodeURI(req.query.email);
   res.render("pages/accounts/password_reset_edit", {
+    current_user: req.user,
     title: "Forgot Password",
     errorMessage: [],
     isAuth: req.isAuthenticated(),
@@ -63,7 +67,7 @@ router.get("/:token/edit", function (req, res) {
 
 router.post(
   "/:token/edit",
-  function (req, res, next) {
+  wrap(async function (req, res, next) {
     const token = req.params.token;
     const email = req.body.email;
     const password = req.body.password;
@@ -71,52 +75,54 @@ router.post(
 
     if (password !== passwordConfirm) {
       res.render("pages/accounts/password_reset_edit", {
+        current_user: req.user,
         title: "Forgot Password",
         errorMessage: ["Password doesn't match"],
         isAuth: req.isAuthenticated(),
         email: email,
       });
     } else {
-      User.isExpired(email, token)
-        .then(() => {
-          next();
-        })
-        .catch(function (err) {
-          console.error(err);
-          res.render("pages/accounts/password_reset_edit", {
-            title: "Forgot Password",
-            errorMessage: [err],
-            isAuth: req.isAuthenticated(),
-            email: email,
-          });
-        });
-    }
-  },
-  function (req, res) {
-    const email = req.body.email;
-    const password = req.body.password;
-    User.updateByEmail(email, {
-      password: password,
-      reset_token: null,
-      reset_limit: null,
-    })
-      .then(() => {
-        res.render("pages/index", {
-          title: "MicroPost",
-          message: "Your password has been reset",
-          isAuth: req.isAuthenticated(),
-        });
-      })
-      .catch(function (err) {
+      try {
+        await User.isExpired(email, token);
+        next();
+      } catch (err) {
         console.error(err);
         res.render("pages/accounts/password_reset_edit", {
+          current_user: req.user,
           title: "Forgot Password",
-          errorMessage: ["DB error. Please issue the token again."],
+          errorMessage: [err],
           isAuth: req.isAuthenticated(),
           email: email,
         });
+      }
+    }
+  }),
+  wrap(async function (req, res) {
+    const email = req.body.email;
+    const password = req.body.password;
+    try {
+      await User.updateByEmail(email, {
+        password: password,
+        reset_token: null,
+        reset_limit: null,
       });
-  }
+      res.render("pages/index", {
+        current_user: req.user,
+        title: "MicroPost",
+        message: "Your password has been reset",
+        isAuth: req.isAuthenticated(),
+      });
+    } catch (err) {
+      console.error(err);
+      res.render("pages/accounts/password_reset_edit", {
+        current_user: req.user,
+        title: "Forgot Password",
+        errorMessage: ["DB error. Please issue the token again."],
+        isAuth: req.isAuthenticated(),
+        email: email,
+      });
+    }
+  })
 );
 
 module.exports = router;

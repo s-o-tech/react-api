@@ -4,6 +4,7 @@ const { validationResult } = require("express-validator");
 
 const User = require("../../models/user");
 const EditParamValidator = require("../../midleware/validators/editParamValidator");
+const wrap = require("../../helpers/async_wrapper");
 
 router.get("/", function (req, res, next) {
   res.render("pages/accounts/edit", {
@@ -15,44 +16,45 @@ router.get("/", function (req, res, next) {
   });
 });
 
-router.post("/", EditParamValidator, function (req, res, next) {
-  const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
-    // Build your resulting errors however you want! String, object, whatever - it works!
-    return `${param}: ${msg}`;
-  };
-  const result = validationResult(req).formatWith(errorFormatter);
-  if (!result.isEmpty()) {
-    res.render("pages/accounts/edit", {
-      title: "Edit User",
-      errorMessage: result.array(),
-      isAuth: req.isAuthenticated(),
-    });
-    return;
-  }
+router.post(
+  "/",
+  EditParamValidator,
+  wrap(async function (req, res, next) {
+    const userId = req.user.id;
+    const username = req.body.username;
+    const password = req.body.password;
+    const email = req.body.email;
 
-  const userId = req.user.id;
-  const username = req.body.username;
-  const password = req.body.password;
-  const email = req.body.email;
-
-  User.update(userId, {
-    name: username,
-    password: password,
-    email: email,
-  })
-    .then(function () {
-      res.render("pages/index", {
-        title: "MicroPost",
+    const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
+      // Build your resulting errors however you want! String, object, whatever - it works!
+      return `${param}: ${msg}`;
+    };
+    const result = validationResult(req).formatWith(errorFormatter);
+    if (!result.isEmpty()) {
+      res.render("pages/accounts/edit", {
+        current_user: req.user,
         userId: userId,
-        message: `Welcome ${username}! Please check your email to activate your account.`,
+        title: "Edit User",
+        errorMessage: result.array(),
         isAuth: req.isAuthenticated(),
       });
-    })
-    .catch(function (err) {
+      return;
+    }
+
+    try {
+      await User.update(userId, {
+        name: username,
+        password: password,
+        email: email,
+      });
+      res.redirect("/");
+    } catch (err) {
       console.error(err);
       // usernameが重複している場合
       if (/users.users_name_unique/.test(err.sqlMessage)) {
         res.render("pages/accounts/edit", {
+          current_user: req.user,
+          userId: userId,
           title: "Edit User",
           errorMessage: [`This username(${username}) is already used`],
           isAuth: req.isAuthenticated(),
@@ -60,7 +62,9 @@ router.post("/", EditParamValidator, function (req, res, next) {
       }
       // emailが重複している場合
       else if (/users.users_email_unique/.test(err.sqlMessage)) {
-        res.render("pages/accounts/dit", {
+        res.render("pages/accounts/edit", {
+          current_user: req.user,
+          userId: userId,
           title: "Edit User",
           errorMessage: [`This email(${email}) is already used`],
           isAuth: req.isAuthenticated(),
@@ -70,12 +74,15 @@ router.post("/", EditParamValidator, function (req, res, next) {
       // ここの仕様は応相談
       else {
         res.render("pages/accounts/edit", {
+          current_user: req.user,
+          userId: userId,
           title: "Edit User",
           errorMessage: [err.sqlMessage],
           isAuth: req.isAuthenticated(),
         });
       }
-    });
-});
+    }
+  })
+);
 
 module.exports = router;

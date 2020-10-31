@@ -13,63 +13,46 @@ async function createUser(username, email, password) {
   const token = crypto.randomBytes(16).toString("hex");
   const hashedToken = await bcrypt.hash(token, 10);
 
-  await knex(TABLE_NAME)
-    .insert({
-      name: username,
-      email: email,
-      password: hashedPassword,
-      activation_token: hashedToken,
-    })
-    .then((result) => {
-      return result;
-    });
+  await knex(TABLE_NAME).insert({
+    name: username,
+    email: email,
+    password: hashedPassword,
+    activation_token: hashedToken,
+  });
 
-  return hashedToken;
+  return token;
 }
 
-function update(id, data) {
+async function update(id, data) {
   const { password, ...rest } = data;
-  return Promise.resolve()
-    .then(() => {
-      if (password) {
-        return bcrypt.hash(password, 10);
-      }
-    })
-    .then((hashedPassword) => {
-      let d = { ...rest };
-      if (hashedPassword) {
-        d = { ...d, password: hashedPassword };
-      }
-      return knex(TABLE_NAME).where({ id: id }).update(d);
-    });
-}
-function updateByEmail(email, data) {
-  const { password, ...rest } = data;
-  return Promise.resolve()
-    .then(() => {
-      if (password) {
-        return bcrypt.hash(password, 10);
-      }
-    })
-    .then((hashedPassword) => {
-      let d = { ...rest };
-      if (hashedPassword) {
-        d = { ...d, password: hashedPassword };
-      }
-      return knex(TABLE_NAME).where({ email: email }).update(d);
-    });
+  let d = { ...rest };
+  if (password) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    d = { ...d, password: hashedPassword };
+  }
+  return await knex(TABLE_NAME).where({ id: id }).update(d);
 }
 
-function verify(email, password) {
-  return knex(TABLE_NAME)
+async function updateByEmail(email, data) {
+  const { password, ...rest } = data;
+  let d = { ...rest };
+  if (password) {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    d = { ...d, password: hashedPassword };
+  }
+  return await knex(TABLE_NAME).where({ email: email }).update(d);
+}
+
+async function verify(email, password) {
+  return await knex(TABLE_NAME)
     .where({ email: email })
     .select("*")
     .then((results) => {
       if (results.length === 0) {
         throw new Error("User not found");
       }
-
       const user = results[0];
+
       return bcrypt.compare(password, user.password).then((result) => {
         if (!result) {
           throw new Error("Invalid password");
@@ -130,7 +113,7 @@ async function followers(userId) {
 
 async function generateResetToken(userId) {
   const token = crypto.randomBytes(16).toString("hex");
-  const hashedToken = bcrypt.hash(token, 10);
+  const hashedToken = await bcrypt.hash(token, 10);
 
   return await knex(TABLE_NAME)
     .where({ id: userId })
