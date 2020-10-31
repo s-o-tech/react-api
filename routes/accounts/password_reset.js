@@ -20,19 +20,19 @@ router.post(
   wrap(async function (req, res, next) {
     const email = req.body.email;
 
-    const user = await User.where({ email });
-    if (!user) {
+    let token;
+    try {
+      token = await User.generateResetToken(email);
+    } catch (error) {
       res.render("pages/accounts/password_reset", {
         current_user: req.user,
         title: "Forgot Password",
         errorMessage: ["Invalid email address"],
         isAuth: req.isAuthenticated(),
       });
-
       return;
     }
 
-    const token = await User.generateResetToken(user.id);
     const url = `localhost:3000/accounts/password_reset/${token}/edit?email=${encodeURIComponent(
       email
     )}`;
@@ -69,9 +69,7 @@ router.post(
   "/:token/edit",
   wrap(async function (req, res, next) {
     const token = req.params.token;
-    const email = req.body.email;
-    const password = req.body.password;
-    const passwordConfirm = req.body.confirmation;
+    const { email, password, passwordConfirm } = req.body;
 
     if (password !== passwordConfirm) {
       res.render("pages/accounts/password_reset_edit", {
@@ -81,31 +79,11 @@ router.post(
         isAuth: req.isAuthenticated(),
         email: email,
       });
-    } else {
-      try {
-        await User.isExpired(email, token);
-        next();
-      } catch (err) {
-        console.error(err);
-        res.render("pages/accounts/password_reset_edit", {
-          current_user: req.user,
-          title: "Forgot Password",
-          errorMessage: [err],
-          isAuth: req.isAuthenticated(),
-          email: email,
-        });
-      }
+      return;
     }
-  }),
-  wrap(async function (req, res) {
-    const email = req.body.email;
-    const password = req.body.password;
+
     try {
-      await User.updateByEmail(email, {
-        password: password,
-        reset_token: null,
-        reset_limit: null,
-      });
+      await User.resetPassword(email, token, password);
       res.render("pages/index", {
         current_user: req.user,
         title: "MicroPost",
@@ -117,7 +95,7 @@ router.post(
       res.render("pages/accounts/password_reset_edit", {
         current_user: req.user,
         title: "Forgot Password",
-        errorMessage: ["DB error. Please issue the token again."],
+        errorMessage: [err],
         isAuth: req.isAuthenticated(),
         email: email,
       });

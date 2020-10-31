@@ -23,6 +23,27 @@ async function createUser(username, email, password) {
   return token;
 }
 
+async function activate(email, token) {
+  const user = await where({ email });
+  if (user === null) {
+    throw new Error("User not found");
+  }
+
+  const result = await bcrypt.compare(token, user.activation_token);
+  if (!result) {
+    throw new Error("Token error. Please issue the token again.");
+  }
+
+  return await knex(TABLE_NAME)
+    .where({ id: user.id })
+    .update({
+      activation_token: null,
+      isActivated: true,
+      activated_at: knex.fn.now(),
+    })
+    .then((result) => result);
+}
+
 async function update(id, data) {
   const { password, ...rest } = data;
   let d = { ...rest };
@@ -30,51 +51,34 @@ async function update(id, data) {
     const hashedPassword = await bcrypt.hash(password, 10);
     d = { ...d, password: hashedPassword };
   }
-  return await knex(TABLE_NAME).where({ id: id }).update(d);
-}
-
-async function updateByEmail(email, data) {
-  const { password, ...rest } = data;
-  let d = { ...rest };
-  if (password) {
-    const hashedPassword = await bcrypt.hash(password, 10);
-    d = { ...d, password: hashedPassword };
-  }
-  return await knex(TABLE_NAME).where({ email: email }).update(d);
+  return knex(TABLE_NAME).where({ id: id }).update(d);
 }
 
 async function verify(email, password) {
-  return await knex(TABLE_NAME)
-    .where({ email: email })
-    .select("*")
-    .then((results) => {
-      if (results.length === 0) {
-        throw new Error("User not found");
-      }
-      const user = results[0];
+  const user = await where({ email });
+  if (user === null) {
+    throw new Error("User not found");
+  }
 
-      return bcrypt.compare(password, user.password).then((result) => {
-        if (!result) {
-          throw new Error("Invalid password");
-        } else if (!user.isActivated) {
-          throw new Error(
-            "Account not activated. Check your email for the activation link."
-          );
-        }
-        return user;
-      });
-    });
+  const result = await bcrypt.compare(password, user.password);
+  if (result) {
+    if (!user.isActivated) {
+      throw new Error(
+        "Account not activated. Check your email for the activation link."
+      );
+    }
+  } else {
+    throw new Error("Invalid password");
+  }
+
+  return user;
 }
 
 async function findById(userId) {
-  const user = await knex(TABLE_NAME)
-    .where({ id: userId })
-    .then((results) => {
-      if (results.length === 0) {
-        throw new Error("User not found");
-      }
-      return results[0];
-    });
+  const user = await where({ id: userId });
+  if (user === null) {
+    throw new Error("User not found");
+  }
 
   const relationshipStats = await Relationship.stats(userId);
   const micropostStats = await Micropost.stats(userId);
@@ -111,12 +115,17 @@ async function followers(userId) {
     .then((result) => result);
 }
 
-async function generateResetToken(userId) {
+async function generateResetToken(email) {
+  const user = await where({ email });
+  if (user === null) {
+    throw new Error("User not found");
+  }
+
   const token = crypto.randomBytes(16).toString("hex");
   const hashedToken = await bcrypt.hash(token, 10);
 
   return await knex(TABLE_NAME)
-    .where({ id: userId })
+    .where({ id: user.id })
     .update({
       reset_token: hashedToken,
       reset_limit: knex.fn.now(),
@@ -126,40 +135,30 @@ async function generateResetToken(userId) {
     });
 }
 
-async function isExpired(email, token) {
-  return await knex(TABLE_NAME)
-    .where({ email: email })
-    .select("*")
-    .then((results) => {
-      if (results.length === 0) {
-        throw new Error("User not found");
-      }
-      const user = results[0];
-      if (Date.parse(user.reset_limit) < Date.now() - 2 * 60 * 60 * 1000) {
-        throw new Error("Token has expired. Please issue the token again.");
-      } else if (!bcrypt.compareSync(token, user.reset_token)) {
-        throw new Error("Token error. Please issue the token again.");
-      }
-    });
-}
+async function resetPassword(email, token, newPassword) {
+  const user = await where({ email });
+  if (user === null) {
+    throw new Error("User not found");
+  }
 
-async function activate(user, token) {
-  if (!(await bcrypt.compare(token, user.activation_token))) {
+  if (Date.parse(user.reset_limit) < Date.now() - 2 * 60 * 60 * 1000) {
+    throw new Error("Token has expired. Please issue the token again.");
+  } else if (!(await bcrypt.compare(token, user.reset_token))) {
     throw new Error("Token error. Please issue the token again.");
   }
 
-  return await knex(TABLE_NAME)
-    .where({ id: user.id })
-    .update({
-      activation_token: null,
-      isActivated: true,
-      activated_at: knex.fn.now(),
-    })
-    .then((result) => result);
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  return knex(TABLE_NAME).where({ id: user.id }).update({
+    password: hashedPassword,
+    reset_token: null,
+    reset_limit: null,
+  });
 }
 
 module.exports = {
   createUser,
+  activate,
   update,
   verify,
   findById,
@@ -167,7 +166,5 @@ module.exports = {
   following,
   followers,
   generateResetToken,
-  activate,
-  updateByEmail,
-  isExpired,
+  resetPassword,
 };

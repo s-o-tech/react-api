@@ -9,11 +9,10 @@ router.get(
     const email = decodeURI(req.query.email);
     const token = req.params.token;
 
-    const user = await User.where({ email });
-    console.log(user);
-
     try {
-      await User.activate(user, token);
+      const result = await User.activate(email, token);
+      console.log(result);
+
       res.render("pages/index", {
         current_user: req.user,
         title: "MicroPost",

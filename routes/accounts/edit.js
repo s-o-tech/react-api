@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { validationResult } = require("express-validator");
 
 const User = require("../../models/user");
+const { validationResult } = require("../../midleware/validator");
 const EditParamValidator = require("../../midleware/validators/editParamValidator");
 const wrap = require("../../helpers/async_wrapper");
 
@@ -25,11 +25,7 @@ router.post(
     const password = req.body.password;
     const email = req.body.email;
 
-    const errorFormatter = ({ location, msg, param, value, nestedErrors }) => {
-      // Build your resulting errors however you want! String, object, whatever - it works!
-      return `${param}: ${msg}`;
-    };
-    const result = validationResult(req).formatWith(errorFormatter);
+    const result = validationResult(req);
     if (!result.isEmpty()) {
       res.render("pages/accounts/edit", {
         current_user: req.user,
