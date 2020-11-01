@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../../models/user");
-const { validationResult } = require("../../midleware/validator");
-const SignupParamValidator = require("../../midleware/validators/signupParamValidator");
+const { validationResult } = require("../../middleware/validator");
+const SignupParamValidator = require("../../middleware/validators/signupParamValidator");
 
 const wrap = require("../../helpers/async_wrapper");
 const Mail = require("../../helpers/send_mail");

@@ -2,8 +2,8 @@ const express = require("express");
 const router = express.Router();
 
 const User = require("../../models/user");
-const { validationResult } = require("../../midleware/validator");
-const EditParamValidator = require("../../midleware/validators/editParamValidator");
+const { validationResult } = require("../../middleware/validator");
+const EditParamValidator = require("../../middleware/validators/editParamValidator");
 const wrap = require("../../helpers/async_wrapper");
 
 router.get("/", function (req, res, next) {
