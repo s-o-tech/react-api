@@ -43,42 +43,9 @@ router.get(
   })
 );
 
-router.post(
-  "/",
-  wrap(async function (req, res, next) {
-    const userId = req.user.id;
-    if (Object.keys(req.body)[0] === "content") {
-      const content = req.body.content;
-      try {
-        await Micropost.insert(content, userId);
-        res.redirect("/");
-      } catch (err) {
-        console.error(err);
-        res.render("pages/index", {
-          title: "",
-          errorMessage: [content],
-          isAuth: false,
-        });
-      }
-    } else if (Object.keys(req.body)[0] === "postId") {
-      const postId = req.body.postId;
-      try {
-        await Micropost.del(postId, userId);
-        res.redirect("/");
-      } catch (err) {
-        console.error(err);
-        res.render("pages/index", {
-          title: "",
-          errorMessage: [`Posting failed`],
-          isAuth: false,
-        });
-      }
-    }
-  })
-);
-
 router.use("/accounts", require("./accounts"));
 router.use("/users", require("./users"));
+router.use("/microposts", require("./microposts"));
 router.use("/relationship", require("./relationship"));
 
 module.exports = router;

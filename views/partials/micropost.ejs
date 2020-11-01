@@ -10,8 +10,8 @@
         Posted <%= micropost.created_at %> ago.
     </span>
     <% if (current_user.id === micropost.user.id) { %>
-        <form action="/" method="post">
-            <input type="hidden" name="postId" value=<%= micropost.id %>>
+        <form action="/microposts/delete" method="post">
+            <input type="hidden" name="post_id" value=<%= micropost.id %>>
             <button class="btn btn-sm btn-primary" type="submit">delete</button>
         </form>
     <% } %>

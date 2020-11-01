@@ -29,17 +29,17 @@ async function stats(userId) {
 }
 
 async function insert(content, userId) {
-  return await knex(TABLE_NAME).insert({
+  return knex(TABLE_NAME).insert({
     content: content,
     user_id: userId,
   });
 }
 
-async function del(postId, userId) {
-  return await knex(TABLE_NAME)
+async function del(userId, postId) {
+  return knex(TABLE_NAME)
     .where({
-      id: postId,
       user_id: userId,
+      id: postId,
     })
     .del();
 }
