@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <%- include('../partials/head'); %>
+    <%- include('../../partials/head'); %>
 </head>
 <body>
-<%- include('../partials/header'); %>
+<%- include('../../partials/header'); %>
 <div class="container">
     <h1>Update your profile</h1>
 
-    <%- include('../partials/error_messages'); %>
+    <%- include('../../partials/error_messages'); %>
 
     <div class="row">
         <div class="col-md-6 offset-md-3">
-            <form action="/edit" method="post">
+            <form action="/accounts/edit" method="post">
                 <div class="form-group">
                     <label>Name</label>
                     <input type="text" name="username" class="form-control" />
@@ -35,6 +35,6 @@
         </div>
     </div>
 </div>
-<%- include('../partials/footer'); %>
+<%- include('../../partials/footer'); %>
 </body>
 </html>

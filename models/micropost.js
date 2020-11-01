@@ -28,7 +28,25 @@ async function stats(userId) {
   return { post_count: count };
 }
 
+async function insert(content, userId) {
+  return await knex(TABLE_NAME).insert({
+    content: content,
+    user_id: userId,
+  });
+}
+
+async function del(postId, userId) {
+  return await knex(TABLE_NAME)
+    .where({
+      id: postId,
+      user_id: userId,
+    })
+    .del();
+}
+
 module.exports = {
   findAll,
   stats,
+  insert,
+  del,
 };

@@ -1,8 +1,10 @@
+require("dotenv").config();
+
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const logger = require("morgan");
-const flash = require("express-flash");
+const flash = require("connect-flash");
 const bodyParser = require("body-parser");
 const sassMiddleware = require("node-sass-middleware");
 
