@@ -1,12 +1,18 @@
 const express = require("express");
 const router = express.Router();
 
-router.get("/", function (req, res, next) {
+router.get("/", function (req, res) {
+  console.log(req.cookies);
   if (req.isAuthenticated()) {
     req.logout();
-    res.redirect("/");
+    res.json({
+      result:true
+    })
   } else {
-    res.redirect("/accounts/signin");
+    console.log("Not Logged In")
+    res.json({
+      result:false
+    })
   }
 });
 

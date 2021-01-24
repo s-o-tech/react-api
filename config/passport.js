@@ -25,6 +25,7 @@ module.exports = function (app) {
       name: "session",
       keys: [secret],
 
+      domain:"localhost",
       // Cookie Options
       maxAge: 24 * 60 * 60 * 1000, // 24 hours
     })

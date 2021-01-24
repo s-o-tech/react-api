@@ -13,7 +13,7 @@ router.get(
       const result = await User.activate(email, token);
       console.log(result);
 
-      res.render("pages/index", {
+      res.json({
         current_user: req.user,
         title: "MicroPost",
         message: "Account activated",
@@ -21,7 +21,8 @@ router.get(
       });
     } catch (err) {
       console.error(err);
-      res.render("pages/accounts/activation", {
+
+      res.json({
         current_user: req.user,
         title: "Account activation",
         errorMessage: [err],

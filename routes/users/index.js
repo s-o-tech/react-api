@@ -3,38 +3,36 @@ const router = express.Router();
 const knex = require("../../db/knex");
 
 router.get("/", function (req, res, next) {
-  if (req.isAuthenticated()) {
-    let currentPage;
-    if (req.query.page === undefined) {
-      currentPage = 1;
-    } else {
-      currentPage = parseInt(req.query.page);
-    }
-    knex("users")
-      .paginate({ perPage: 10, currentPage: currentPage, isLengthAware: true })
-      .then(function (result) {
-        const userRows = JSON.parse(JSON.stringify(result.data));
-        const pagination = result.pagination;
-
-        res.render("pages/userlist", {
-          current_user: req.user,
-          title: "Userlist",
-          message: "",
-          isAuth: req.isAuthenticated(),
-          users: userRows,
-          pagination: pagination,
-          isAdmin: req.user.isAdmin,
-          userId: req.user.id,
-        });
-      })
-      .catch(function (err) {
-        // error処理は変更予定
-        console.error(err);
-        res.redirect("/users");
-      });
+  let currentPage;
+  if (req.query.page === undefined) {
+    currentPage = 1;
   } else {
-    res.redirect("/signin");
+    currentPage = parseInt(req.query.page);
   }
+  knex("users")
+    .paginate({ perPage: 10, currentPage: currentPage, isLengthAware: true })
+    .then(function (result) {
+      const userRows = JSON.parse(JSON.stringify(result.data));
+      const pagination = result.pagination;
+
+      // res.render("pages/userlist", {
+      res.json({
+        current_user: req.user,
+        title: "Userlist",
+        message: "",
+        isAuth: req.isAuthenticated(),
+        users: userRows,
+        pagination: pagination,
+        isAdmin: req.user.isAdmin,
+        userId: req.user.id,
+      });
+    })
+    .catch(function (err) {
+      // error処理は変更予定
+      console.error(err);
+      res.redirect("/users");
+    });
+  
 });
 
 router.post(

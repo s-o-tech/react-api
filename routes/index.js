@@ -8,6 +8,7 @@ const wrap = require("../helpers/async_wrapper");
 router.get(
   "/",
   wrap(async function (req, res, next) {
+    //gravatarURIの処理も追加する
     try {
       if (req.isAuthenticated()) {
         const userId = req.user.id;
@@ -23,7 +24,8 @@ router.get(
 
         const microposts = await Micropost.findAll(userId, currentPage);
         // const pagination = result.pagination;
-        res.render("pages/index", {
+        // res.render("pages/index", {
+        res.json({
           current_user: req.user,
           user,
           title: "",
@@ -32,7 +34,7 @@ router.get(
           pagination: { currentPage: 0, lastPage: 0 },
         });
       } else {
-        res.render("pages/index", {
+        res.json({
           title: "",
           isAuth: req.isAuthenticated(),
         });

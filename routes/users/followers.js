@@ -6,7 +6,7 @@ const handler = async function (req, res, next) {
   const user = await User.findById(userId);
   const followers = await User.followers(userId);
 
-  res.render("pages/followers", {
+  res.json({
     current_user: req.user,
     user,
     title: "",

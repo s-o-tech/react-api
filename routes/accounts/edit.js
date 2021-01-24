@@ -7,7 +7,7 @@ const EditParamValidator = require("../../middleware/validators/editParamValidat
 const wrap = require("../../helpers/async_wrapper");
 
 router.get("/", function (req, res, next) {
-  res.render("pages/accounts/edit", {
+  res.json({
     current_user: req.user,
     title: "Edit User",
     errorMessage: [],
